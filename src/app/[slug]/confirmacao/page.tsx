@@ -7,6 +7,7 @@ import { EleicaoLayout } from "@/components/eleicao/EleicaoLayout";
 import { EleicaoLoading } from "@/components/eleicao/EleicaoLoading";
 import { EleicaoMensagem } from "@/components/eleicao/EleicaoMensagem";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { solicitarCodigoConfirmacao, validarCodigoConfirmacao } from "@/services/eleicao/eleicao.service";
 import {
@@ -149,23 +150,47 @@ export default function EleicaoConfirmacaoPage() {
   }
 
   return (
-    <EleicaoLayout>
-      <EleicaoMensagem titulo="Confirmação de identidade" mensagem="Digite o código recebido no WhatsApp para continuar.">
-        <div className="mx-auto max-w-md space-y-5 text-left">
-          <div className="rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] p-4 text-sm leading-6 text-[var(--muted)]">
-            {nomeAssociado ? <p className="font-semibold text-[var(--foreground)]">Olá, {nomeAssociado}.</p> : null}
-            <p>Enviamos um código de confirmação para seu WhatsApp.</p>
-            {destino ? <p className="mt-1 font-mono font-semibold text-[var(--foreground)]">{destino}</p> : null}
+    <EleicaoLayout subtitulo="Confirme sua identidade para continuar com segurança.">
+      <div className="mx-auto max-w-2xl">
+        <section className="text-center">
+          <div className="mx-auto grid size-14 place-items-center rounded-2xl border border-[var(--brand)]/15 bg-[var(--brand-soft)] text-[var(--brand)] shadow-sm">
+            <Icon name="whatsapp" className="size-6" />
           </div>
 
-          <label className="block text-sm font-semibold">
+          <p className="mt-4 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--brand)]">
+            Confirmação em duas etapas
+          </p>
+
+          <h1 className="mt-2 text-2xl font-black tracking-tight text-[var(--foreground)] sm:text-3xl">
+            Confirmação de identidade
+          </h1>
+
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--muted)]">
+            Digite o código de 6 dígitos enviado ao seu WhatsApp para continuar.
+          </p>
+        </section>
+
+        <section className="mt-7 rounded-[24px] border border-[var(--line)] bg-white p-5 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.45)] sm:p-7">
+          <div className="flex gap-3 rounded-2xl border border-[var(--brand)]/15 bg-[var(--brand-soft)] p-4 text-sm leading-6 text-[var(--brand-strong)]">
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/80 text-[var(--brand)] shadow-sm">
+              <Icon name="user" />
+            </span>
+            <div>
+              {nomeAssociado ? <p className="font-extrabold text-[var(--foreground)]">Olá, {nomeAssociado}.</p> : null}
+              <p>Enviamos um código de confirmação para o WhatsApp cadastrado.</p>
+              {destino ? <p className="mt-1 font-mono font-bold text-[var(--foreground)]">{destino}</p> : null}
+            </div>
+          </div>
+
+          <label className="mt-5 block text-sm font-bold text-[var(--foreground)]">
             Código de confirmação
             <Input
               aria-label="Código de confirmação"
-              className="mt-2 text-center font-mono text-xl font-bold tracking-[0.35em]"
+              className="mt-2 h-14 text-center font-mono text-2xl font-black tracking-[0.45em]"
               inputMode="numeric"
               maxLength={6}
               pattern="[0-9]*"
+              placeholder="000000"
               value={codigo}
               onChange={(e) => onCodigoChange(e.target.value)}
               onPaste={(e) => {
@@ -175,22 +200,54 @@ export default function EleicaoConfirmacaoPage() {
             />
           </label>
 
-          <div className="text-center text-sm text-[var(--muted)]">
-            {expiraSegundos > 0 ? `Código válido por ${formatarTempo(expiraSegundos)}` : "Código expirado. Solicite um novo código."}
+          <div className="mt-3 text-center text-sm font-medium text-[var(--muted)]">
+            {expiraSegundos > 0 ? (
+              <span>Código válido por <strong className="text-[var(--foreground)]">{formatarTempo(expiraSegundos)}</strong></span>
+            ) : (
+              <span>Código expirado. Solicite um novo código.</span>
+            )}
           </div>
 
-          {mensagemErro ? <div role="alert" className="rounded-xl border border-red-200 bg-[var(--danger-soft)] px-4 py-3 text-sm text-red-800">{mensagemErro}</div> : null}
+          {mensagemErro ? (
+            <div role="alert" className="mt-5 flex gap-3 rounded-2xl border border-red-200 bg-[var(--danger-soft)] px-4 py-3 text-sm leading-6 text-red-800">
+              <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-white/80">
+                <Icon name="x" className="size-3.5" />
+              </span>
+              <div>
+                <strong>Não foi possível enviar ou validar o código.</strong>
+                <div>{mensagemErro}</div>
+              </div>
+            </div>
+          ) : null}
 
-          <div className="grid gap-2 sm:grid-cols-2">
-            <Button onClick={onConfirmar} disabled={validando || codigo.length !== 6} type="button">{validando ? "Validando..." : "Confirmar código"}</Button>
-            <Button variant="secondary" onClick={() => { limparSessaoEleicao(slug); router.replace(`/${slug}`); }} type="button">Voltar</Button>
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <Button size="lg" onClick={onConfirmar} disabled={validando || codigo.length !== 6} type="button" icon={<Icon name="check" />}>
+              {validando ? "Validando..." : "Confirmar código"}
+            </Button>
+            <Button size="lg" variant="secondary" onClick={() => { limparSessaoEleicao(slug); router.replace(`/${slug}`); }} type="button">
+              Voltar para eleição
+            </Button>
           </div>
 
-          <div className="text-center text-sm text-[var(--muted)]">
-            {reenviarSegundos > 0 ? <span>Reenviar código em {reenviarSegundos}s</span> : <Button variant="ghost" onClick={onReenviar} size="sm" type="button">Reenviar código</Button>}
+          <div className="mt-5 text-center text-sm text-[var(--muted)]">
+            {reenviarSegundos > 0 ? (
+              <span>Você poderá reenviar o código em <strong>{reenviarSegundos}s</strong>.</span>
+            ) : (
+              <Button variant="ghost" onClick={onReenviar} size="sm" type="button" icon={<Icon name="whatsapp" />}>
+                Reenviar código
+              </Button>
+            )}
           </div>
+        </section>
+
+        <div className="mt-5 flex gap-3 rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] px-4 py-4 text-sm leading-6 text-[var(--muted)]">
+          <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-white text-[var(--brand)] shadow-sm">
+            <Icon name="check" className="size-3.5" />
+          </span>
+          <p>
+            O código é usado apenas para confirmar sua identidade antes da votação. Não compartilhe este código com outras pessoas.
+          </p>
         </div>
-      </EleicaoMensagem>
+      </div>
     </EleicaoLayout>
-  );
-}
+  );}
