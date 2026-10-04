@@ -50,7 +50,7 @@ export function EleicaoFooter({ email, telefone, instagramUrl, facebookUrl, yout
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
         <section>
           <h2 className="text-xs font-bold uppercase tracking-[0.16em] text-[var(--brand)]">Sistema de Votação</h2>
-          <p className="mt-3 max-w-xs leading-6">MoviSystem Tecnologia em movimento.</p>
+          <p className="mt-3 max-w-xs leading-6">Tecnologia desenvolvida pela MoviSystem.</p>
         </section>
 
         <section>
