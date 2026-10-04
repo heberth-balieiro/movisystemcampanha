@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { EleicaoLayout } from "@/components/eleicao/EleicaoLayout";
 import { EleicaoMensagem } from "@/components/eleicao/EleicaoMensagem";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { registrarVoto } from "@/services/eleicao/eleicao.service";
 import {
   limparSessaoEleicao,
@@ -103,25 +104,64 @@ export default function EleicaoConfirmaVotoPage() {
     : selecao.tipo_voto === "BRANCO" ? "Voto em branco" : "Voto nulo";
 
   return (
-    <EleicaoLayout>
-      <EleicaoMensagem titulo="Confirme seu voto" mensagem="Revise a escolha antes de registrar. Depois da confirmação, o voto não poderá ser alterado.">
-        <div className="mx-auto max-w-md space-y-5 text-left">
-          <div className="rounded-2xl border border-[var(--brand)]/25 bg-[var(--brand-soft)] p-5 text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--brand)]">Opção selecionada</p>
-            <div className="mt-2 text-lg font-black text-[var(--foreground)]">{tituloSelecao}</div>
-            {selecao.tipo_voto === "CHAPA" && selecao.nome_chapa ? <div className="mt-1 text-sm text-[var(--muted)]">{selecao.nome_chapa}</div> : null}
+    <EleicaoLayout subtitulo="Revise sua escolha antes de registrar o voto.">
+      <div className="mx-auto max-w-2xl">
+        <section className="text-center">
+          <div className="mx-auto grid size-14 place-items-center rounded-2xl border border-[var(--brand)]/15 bg-[var(--brand-soft)] text-[var(--brand)] shadow-sm">
+            <Icon name="check" className="size-6" />
           </div>
 
-          {mensagem ? <div role="alert" className="rounded-xl border border-red-200 bg-[var(--danger-soft)] px-4 py-3 text-sm text-red-800">{mensagem}</div> : null}
+          <p className="mt-4 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--brand)]">Etapa final</p>
+          <h1 className="mt-2 text-2xl font-black tracking-tight text-[var(--foreground)] sm:text-3xl">Confirme seu voto</h1>
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--muted)]">
+            Revise sua escolha antes de registrar. Após a confirmação, o voto não poderá ser alterado.
+          </p>
+        </section>
 
-          <div className="grid gap-2 sm:grid-cols-2">
-            <Button variant="secondary" onClick={() => router.replace(`/${slug}/votacao`)} disabled={enviando} type="button">Voltar e revisar</Button>
-            <Button onClick={onConfirmar} disabled={enviando || bloqueadoSegundoVoto} type="button">{enviando ? "Registrando voto..." : "Confirmar voto"}</Button>
+        <section className="mt-7 rounded-[24px] border border-[var(--line)] bg-white p-5 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.45)] sm:p-7">
+          <div className="rounded-[22px] border border-[var(--brand)]/20 bg-[var(--brand-soft)] p-5 text-center sm:p-6">
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--brand)]">Opção selecionada</p>
+            <div className="mt-3 text-2xl font-black tracking-tight text-[var(--foreground)]">{tituloSelecao}</div>
+            {selecao.tipo_voto === "CHAPA" && selecao.nome_chapa ? (
+              <div className="mt-2 text-base font-semibold text-[var(--brand-strong)]">{selecao.nome_chapa}</div>
+            ) : null}
           </div>
 
-          <p className="text-center text-xs leading-5 text-[var(--muted)]">O comprovante confirma o registro do voto sem revelar a opção escolhida.</p>
+          <div className="mt-5 flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm leading-6 text-amber-900">
+            <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-white text-amber-700 shadow-sm">
+              <Icon name="check" className="size-3.5" />
+            </span>
+            <div>
+              <strong>Revise antes de confirmar.</strong>
+              <div>Depois do registro, não será possível alterar ou substituir este voto.</div>
+            </div>
+          </div>
+
+          {mensagem ? (
+            <div role="alert" className="mt-5 rounded-2xl border border-red-200 bg-[var(--danger-soft)] px-4 py-3 text-sm leading-6 text-red-800">
+              {mensagem}
+            </div>
+          ) : null}
+
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <Button size="lg" variant="secondary" onClick={() => router.replace(`/${slug}/votacao`)} disabled={enviando} type="button">
+              Voltar e revisar
+            </Button>
+            <Button size="lg" onClick={onConfirmar} disabled={enviando || bloqueadoSegundoVoto} type="button" icon={<Icon name="check" />}>
+              {enviando ? "Registrando voto..." : "Confirmar voto"}
+            </Button>
+          </div>
+        </section>
+
+        <div className="mt-5 flex gap-3 rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] px-4 py-4 text-sm leading-6 text-[var(--muted)]">
+          <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-white text-[var(--brand)] shadow-sm">
+            <Icon name="ticket" className="size-3.5" />
+          </span>
+          <p>
+            O comprovante confirma que o voto foi registrado, sem exibir a opção escolhida pelo eleitor.
+          </p>
         </div>
-      </EleicaoMensagem>
+      </div>
     </EleicaoLayout>
   );
 }
