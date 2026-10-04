@@ -157,7 +157,11 @@ export function VotacaoCard({ slug, eleicao, entidade }: VotacaoCardProps) {
               Ver resultado
             </ButtonLink>
           ) : (
-            <div className="inline-flex min-h-12 items-center justify-center rounded-xl border border-[var(--line)] bg-slate-100 px-5 text-sm font-bold text-slate-500">
+            <div
+              aria-disabled="true"
+              className="inline-flex min-h-12 cursor-not-allowed items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-5 text-sm font-bold text-slate-400"
+              title="A votação ainda não está disponível"
+            >
               Participação indisponível neste momento
             </div>
           )}
