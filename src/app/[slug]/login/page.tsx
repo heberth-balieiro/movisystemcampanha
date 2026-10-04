@@ -81,41 +81,58 @@ export default function EleicaoLoginPage() {
 
   return (
     <EleicaoLayout subtitulo="Utilize seus dados para acessar a votação.">
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-2xl">
         <div className="text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--brand)]">Acesso do eleitor</p>
-          <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">Identificação do associado</h1>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[var(--muted)]">
-            Para continuar, informe os dados cadastrados junto à entidade.
+          <div className="mx-auto grid size-14 place-items-center rounded-2xl border border-[var(--brand)]/15 bg-[var(--brand-soft)] text-[var(--brand)] shadow-sm">
+            <Icon name="user" className="size-6" />
+          </div>
+          <p className="mt-4 text-[11px] font-extrabold uppercase tracking-[0.18em] text-[var(--brand)]">Acesso do eleitor</p>
+          <h1 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">Identificação do eleitor</h1>
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--muted)]">
+            Para continuar, informe os dados cadastrados junto à entidade responsável pela votação.
           </p>
         </div>
 
-        <form className="mt-7 space-y-5" onSubmit={handleSubmit}>
-          <label className="block text-sm font-semibold">
-            CPF
-            <Input
-              autoComplete="off"
-              className="mt-2"
-              disabled={isLoading}
-              inputMode="numeric"
-              maxLength={14}
-              onChange={(event) => setCpf(formatarCpf(event.target.value))}
-              placeholder="___.___.___-__"
-              value={cpf}
-            />
-          </label>
+        <form className="mt-7 rounded-[24px] border border-[var(--line)] bg-white p-5 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.45)] sm:p-7" onSubmit={handleSubmit}>
+          <div className="space-y-5">
+            <label className="block text-sm font-bold text-[var(--foreground)]">
+              CPF
+              <div className="relative mt-2">
+                <span className="pointer-events-none absolute inset-y-0 left-0 grid w-11 place-items-center text-[var(--brand)]">
+                  <Icon name="user" />
+                </span>
+                <Input
+                  autoComplete="off"
+                  className="h-12 pl-11"
+                  disabled={isLoading}
+                  inputMode="numeric"
+                  maxLength={14}
+                  onChange={(event) => setCpf(formatarCpf(event.target.value))}
+                  placeholder="000.000.000-00"
+                  value={cpf}
+                />
+              </div>
+            </label>
 
-          <label className="block text-sm font-semibold">
-            Matrícula
-            <Input
-              autoComplete="off"
-              className="mt-2"
-              disabled={isLoading}
-              onChange={(event) => setMatricula(event.target.value)}
-              type="password"
-              value={matricula}
-            />
-          </label>
+            <label className="block text-sm font-bold text-[var(--foreground)]">
+              Matrícula
+              <div className="relative mt-2">
+                <span className="pointer-events-none absolute inset-y-0 left-0 grid w-11 place-items-center text-[var(--brand)]">
+                  <Icon name="ticket" />
+                </span>
+                <Input
+                  autoComplete="off"
+                  className="h-12 pl-11"
+                  disabled={isLoading}
+                  inputMode="numeric"
+                  onChange={(event) => setMatricula(somenteDigitos(event.target.value))}
+                  placeholder="Informe sua matrícula"
+                  type="text"
+                  value={matricula}
+                />
+              </div>
+            </label>
+          </div>
 
           {avisoSessao ? (
             <p className="rounded-xl border border-[var(--brand)]/20 bg-[var(--brand-soft)] px-4 py-3 text-sm leading-6 text-[var(--brand-strong)]" role="status">
@@ -129,19 +146,24 @@ export default function EleicaoLoginPage() {
             </p>
           ) : null}
 
-          <div className="grid gap-2 sm:grid-cols-2">
-            <Button disabled={isLoading || erro === jaVotouMessage} icon={<Icon name="login" />} type="submit">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2">
+            <Button size="lg" disabled={isLoading || erro === jaVotouMessage} icon={<Icon name="login" />} type="submit">
               {isLoading ? "Validando..." : "Continuar"}
             </Button>
-            <Button type="button" variant="secondary" onClick={() => router.push(`/${slug}`)}>
+            <Button size="lg" type="button" variant="secondary" onClick={() => router.push(`/${slug}`)}>
               Voltar para eleição
             </Button>
           </div>
         </form>
 
-        <p className="mt-6 rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] px-4 py-3 text-sm leading-6 text-[var(--muted)]">
-          Seus dados de identificação são utilizados somente para validar sua participação na votação.
-        </p>
+        <div className="mt-5 flex gap-3 rounded-2xl border border-[var(--brand)]/15 bg-[var(--brand-soft)] px-4 py-4 text-sm leading-6 text-[var(--brand-strong)]">
+          <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-white/80 text-[var(--brand)] shadow-sm">
+            <Icon name="check" className="size-3.5" />
+          </span>
+          <p>
+            Seus dados são utilizados somente para confirmar sua identidade e verificar sua aptidão para participar desta votação.
+          </p>
+        </div>
       </div>
     </EleicaoLayout>
   );
