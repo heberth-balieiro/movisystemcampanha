@@ -7,6 +7,7 @@ import { ChapaCard } from "@/components/eleicao/ChapaCard";
 import { EleicaoLayout } from "@/components/eleicao/EleicaoLayout";
 import { EleicaoMensagem } from "@/components/eleicao/EleicaoMensagem";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 import { buscarCedulaVotacao } from "@/services/eleicao/eleicao.service";
 import { limparSessaoEleicao, mensagemIndicaSessaoExpirada, obterTokenVotacao, salvarSelecaoVoto } from "@/services/eleicao/eleicao-session.service";
 import type { EleicaoVotacaoDados, TipoVoto } from "@/types/eleicao";
@@ -150,63 +151,90 @@ export default function EleicaoVotacaoPage() {
   }
 
   return (
-    <EleicaoLayout>
-      <div className="space-y-7">
-        <header className="border-b border-[var(--line)] pb-5">
-          <p className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--brand)]">Cédula de votação</p>
-          <h1 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">{eleicao.nome}</h1>
-          {eleicao.descricao ? <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--muted)] sm:text-base">{eleicao.descricao}</p> : null}
-          <div className="mt-2 text-xs font-semibold text-[var(--muted)]">Ano {eleicao.ano}</div>
+    <EleicaoLayout subtitulo="Escolha sua opção de voto com atenção antes de confirmar.">
+      <div className="space-y-8">
+        <header className="rounded-[24px] border border-[var(--line)] bg-[var(--surface-muted)] p-5 sm:p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--brand)]/15 bg-[var(--brand-soft)] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-[var(--brand-strong)]">
+                <Icon name="ticket" className="size-3.5" />
+                Cédula de votação
+              </div>
+              <h1 className="mt-4 text-2xl font-black tracking-[-0.025em] text-[var(--foreground)] sm:text-3xl">{eleicao.nome}</h1>
+              {eleicao.descricao ? <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--muted)] sm:text-base">{eleicao.descricao}</p> : null}
+            </div>
+
+            <div className="flex w-fit items-center gap-2 rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm font-bold text-[var(--muted)] shadow-sm">
+              <Icon name="calendar" className="text-[var(--brand)]" />
+              Ano {eleicao.ano}
+            </div>
+          </div>
         </header>
 
         <section aria-labelledby="chapas-title">
-          <div className="mb-4 flex items-end justify-between gap-3">
+          <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h2 id="chapas-title" className="text-lg font-bold">Escolha uma chapa</h2>
-              <p className="mt-1 text-sm text-[var(--muted)]">Selecione uma das opções abaixo para continuar.</p>
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-[var(--brand)]">Escolha principal</p>
+              <h2 id="chapas-title" className="mt-1 text-xl font-black tracking-tight">Escolha uma chapa</h2>
+              <p className="mt-1 text-sm leading-6 text-[var(--muted)]">Selecione uma das opções abaixo para continuar.</p>
             </div>
           </div>
 
           {chapas.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               {chapas.map((chapa) => (
                 <ChapaCard key={chapa.id} chapa={chapa} selected={chapaSelecionada === chapa.id && tipoAlternativo === null} onClick={() => selecionarChapa(chapa.id)} />
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-[var(--line)] bg-[var(--surface-muted)] p-5 text-sm text-[var(--muted)]">Nenhuma chapa encontrada.</div>
+            <div className="rounded-2xl border border-dashed border-[var(--line)] bg-[var(--surface-muted)] p-5 text-sm text-[var(--muted)]">Nenhuma chapa encontrada.</div>
           )}
         </section>
 
-        <section className="space-y-3" aria-labelledby="outras-opcoes-title">
+        <section className="rounded-[24px] border border-[var(--line)] bg-white p-5 sm:p-6" aria-labelledby="outras-opcoes-title">
           <div>
-            <h2 id="outras-opcoes-title" className="text-base font-bold">Outras opções</h2>
-            <p className="mt-1 text-sm text-[var(--muted)]">Também é possível registrar voto em branco ou nulo.</p>
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-[var(--brand)]">Alternativas</p>
+            <h2 id="outras-opcoes-title" className="mt-1 text-lg font-black">Voto em branco ou nulo</h2>
+            <p className="mt-1 text-sm leading-6 text-[var(--muted)]">Essas opções também são válidas e serão confirmadas na próxima etapa.</p>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {(["BRANCO", "NULO"] as const).map((tipo) => {
               const selected = tipoAlternativo === tipo;
+              const titulo = tipo === "BRANCO" ? "Voto em Branco" : "Voto Nulo";
+              const descricao = tipo === "BRANCO" ? "Registra sua participação sem escolher uma chapa." : "Registra um voto nulo nesta eleição.";
               return (
                 <button
                   aria-pressed={selected}
-                  className={`focus-ring flex min-h-14 items-center justify-between rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${
-                    selected ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-strong)]" : "border-[var(--line)] bg-white hover:border-[var(--brand)]/50"
+                  className={`focus-ring flex min-h-24 items-center justify-between gap-4 rounded-2xl border px-4 py-4 text-left transition ${
+                    selected ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-strong)] shadow-sm" : "border-[var(--line)] bg-[var(--surface-muted)] hover:border-[var(--brand)]/50 hover:bg-white"
                   }`}
                   key={tipo}
                   onClick={() => selecionarAlternativa(tipo)}
                   type="button"
                 >
-                  Voto {tipo === "BRANCO" ? "em Branco" : "Nulo"}
-                  <span className={`grid size-5 place-items-center rounded-full border text-[10px] ${selected ? "border-[var(--brand)] bg-[var(--brand)] text-[var(--brand-contrast)]" : "border-[var(--line)] text-transparent"}`}>✓</span>
+                  <div>
+                    <div className="text-sm font-black text-[var(--foreground)]">{titulo}</div>
+                    <div className="mt-1 text-xs leading-5 text-[var(--muted)]">{descricao}</div>
+                  </div>
+                  <span className={`grid size-7 shrink-0 place-items-center rounded-full border text-xs font-black ${selected ? "border-[var(--brand)] bg-[var(--brand)] text-[var(--brand-contrast)]" : "border-[var(--line)] bg-white text-transparent"}`}>✓</span>
                 </button>
               );
             })}
           </div>
         </section>
 
-        <div className="flex flex-col gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] p-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm text-[var(--muted)]">Revise a opção selecionada antes de avançar para a confirmação.</div>
-          <Button className="w-full sm:w-auto" disabled={!possuiSelecao} onClick={continuar} type="button">Continuar</Button>
+        <div className="sticky bottom-3 z-10 flex flex-col gap-4 rounded-[22px] border border-[var(--line)] bg-white/95 p-4 shadow-[0_20px_50px_-32px_rgba(15,23,42,0.3)] backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:p-5">
+          <div className="flex gap-3 text-sm leading-6 text-[var(--muted)]">
+            <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-[var(--brand-soft)] text-[var(--brand)]">
+              <Icon name="check" className="size-3.5" />
+            </span>
+            <div>
+              <div className="font-bold text-[var(--foreground)]">Revise sua escolha antes de continuar.</div>
+              <div>Na próxima tela você ainda poderá conferir a opção antes de registrar o voto.</div>
+            </div>
+          </div>
+          <Button className="w-full sm:w-auto" size="lg" disabled={!possuiSelecao} onClick={continuar} type="button" icon={<Icon name="arrow-right" />}>Continuar</Button>
         </div>
       </div>
     </EleicaoLayout>
