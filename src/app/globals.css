@@ -1,0 +1,388 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f3f6f5;
+  --foreground: #17211e;
+  --muted: #66736d;
+  --line: #dde5e1;
+  --brand: #1e6f5c;
+  --brand-contrast: #ffffff;
+  --brand-strong: #155445;
+  --brand-strong: color-mix(in srgb, var(--brand) 72%, #0f172a);
+  --brand-soft: #eaf4f1;
+  --brand-soft: color-mix(in srgb, var(--brand) 10%, white);
+  --accent: #c7683c;
+  --accent-soft: #fbefe9;
+  --accent-soft: color-mix(in srgb, var(--accent) 11%, white);
+  --paper: #ffffff;
+  --surface-muted: #f7f9f8;
+  --success: #137a55;
+  --success-soft: #ecf8f2;
+  --warning: #9a6500;
+  --warning-soft: #fff7df;
+  --danger: #b42318;
+  --danger-soft: #fff1f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--background);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--brand-soft);
+  color: var(--foreground);
+}
+
+.election-shell {
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--brand) 10%, transparent), transparent 34rem),
+    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 30rem),
+    linear-gradient(180deg, #f8faf9 0%, var(--background) 58%, #eef3f1 100%);
+}
+
+.page-shell {
+  width: min(1180px, calc(100% - 24px));
+  margin-inline: auto;
+}
+
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus-ring:focus-visible {
+  outline-color: var(--brand);
+  box-shadow: 0 0 0 4px var(--brand-soft);
+}
+
+.btn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.625rem;
+  background: var(--brand);
+  padding: 0.625rem 1rem;
+  color: var(--brand-contrast);
+  font-weight: 700;
+  transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+}
+
+.btn:hover {
+  background: var(--brand-strong);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 4px var(--brand-soft);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Relatórios administrativos — impressão limpa em A4 */
+.print-report-root {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 14mm 13mm 14mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .election-shell {
+    display: none !important;
+  }
+
+  .print-report-root {
+    display: block !important;
+    color: #17211e;
+    background: #ffffff;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 10pt;
+    line-height: 1.4;
+  }
+
+  .print-report-sheet {
+    width: 100%;
+  }
+
+  .print-report-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 8mm;
+    padding-bottom: 5mm;
+    border-bottom: 1px solid #cfd8d3;
+  }
+
+  .print-report-kicker {
+    margin-bottom: 2mm;
+    color: var(--brand, #1e6f5c);
+    font-size: 8pt;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .print-report-header h1 {
+    margin: 0;
+    font-size: 19pt;
+    line-height: 1.15;
+  }
+
+  .print-report-entity {
+    margin-top: 2mm;
+    color: #52615b;
+    font-size: 10pt;
+    font-weight: 600;
+  }
+
+  .print-report-meta {
+    align-self: end;
+    color: #52615b;
+    font-size: 8.5pt;
+    line-height: 1.55;
+  }
+
+  .print-report-meta strong {
+    color: #17211e;
+  }
+
+  .print-report-section {
+    margin-top: 7mm;
+    break-inside: avoid;
+  }
+
+  .print-report-section h2 {
+    margin: 0 0 3mm;
+    font-size: 12pt;
+  }
+
+  .print-report-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3mm;
+  }
+
+  .print-report-summary-grid > div {
+    padding: 4mm 3mm;
+    border: 1px solid #dce4e0;
+    border-radius: 2mm;
+    background: #f7f9f8;
+    text-align: center;
+  }
+
+  .print-report-summary-grid span {
+    display: block;
+    color: #66736d;
+    font-size: 8pt;
+    font-weight: 600;
+  }
+
+  .print-report-summary-grid strong {
+    display: block;
+    margin-top: 1mm;
+    font-size: 16pt;
+  }
+
+  .print-report-table {
+    width: 100%;
+    border-collapse: collapse;
+    break-inside: auto;
+  }
+
+  .print-report-table thead {
+    display: table-header-group;
+  }
+
+  .print-report-table tr {
+    break-inside: avoid;
+    break-after: auto;
+  }
+
+  .print-report-table th,
+  .print-report-table td {
+    padding: 2.6mm 3mm;
+    border: 1px solid #dce4e0;
+    vertical-align: top;
+  }
+
+  .print-report-table thead th {
+    background: #f0f4f2;
+    font-size: 8pt;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .print-report-table .numeric {
+    text-align: right;
+  }
+
+  .print-report-table-compact th {
+    width: 32mm;
+    background: #f7f9f8;
+    text-align: left;
+  }
+
+
+  .print-report-section-flow {
+    break-inside: auto;
+  }
+
+  .print-report-section-title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6mm;
+    margin-bottom: 3mm;
+  }
+
+  .print-report-section-title-row h2 {
+    margin-bottom: 0;
+  }
+
+  .print-report-section-title-row strong {
+    color: #52615b;
+    font-size: 8pt;
+  }
+
+  .print-report-table-auditoria {
+    font-size: 7.5pt;
+  }
+
+  .print-report-table-auditoria th,
+  .print-report-table-auditoria td {
+    padding: 2mm 2.2mm;
+  }
+
+  .print-report-table-auditoria th:nth-child(1) { width: 27mm; }
+  .print-report-table-auditoria th:nth-child(2) { width: 35mm; }
+  .print-report-table-auditoria th:nth-child(3) { width: 18mm; }
+  .print-report-table-auditoria th:nth-child(4) { width: 17mm; }
+  .print-report-table-auditoria th:nth-child(6) { width: 27mm; }
+
+  .print-report-code {
+    margin-top: 0.8mm;
+    color: #738079;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 6.5pt;
+  }
+
+  .print-report-table .nowrap {
+    white-space: nowrap;
+  }
+
+  .print-report-note,
+  .print-report-empty {
+    padding: 3.5mm 4mm;
+    border: 1px solid #dce4e0;
+    border-radius: 2mm;
+    background: #f7f9f8;
+    color: #52615b;
+  }
+
+
+  .print-ata-text {
+    font-size: 10pt;
+    line-height: 1.7;
+    text-align: justify;
+  }
+
+  .print-ata-text p {
+    margin: 0 0 4mm;
+  }
+
+  .print-ata-signatures {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12mm 10mm;
+    margin-top: 18mm;
+    break-inside: avoid;
+  }
+
+  .print-ata-signatures > div {
+    min-height: 14mm;
+    padding-top: 3mm;
+    border-top: 1px solid #7b8781;
+    color: #52615b;
+    font-size: 8.5pt;
+    text-align: center;
+  }
+
+  .print-ata-signatures > div:last-child {
+    grid-column: 1 / -1;
+    width: 55%;
+    justify-self: center;
+  }
+
+  .print-report-footer {
+    margin-top: 9mm;
+    padding-top: 3mm;
+    border-top: 1px solid #dce4e0;
+    color: #738079;
+    font-size: 7.5pt;
+    text-align: center;
+  }
+}
