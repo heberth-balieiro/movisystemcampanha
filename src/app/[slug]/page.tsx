@@ -62,7 +62,7 @@ function EleicaoConteudo({
           <img
             src={bannerSrc}
             alt={`Banner ${entidade.nome_exibicao}`}
-            className="max-h-[300px] w-full object-cover transition duration-500 group-hover:scale-[1.01]"
+            className="max-h-[240px] w-full object-cover transition duration-500 group-hover:scale-[1.01]"
           />
         </section>
       ) : null}
