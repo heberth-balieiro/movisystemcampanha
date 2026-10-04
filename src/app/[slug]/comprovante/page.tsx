@@ -17,6 +17,7 @@ export default function EleicaoComprovantePage() {
   const entidade = useEleicaoEntidade();
   const [comprovante, setComprovante] = useState<string | null>(null);
   const [copiado, setCopiado] = useState(false);
+  const [mensagemAcao, setMensagemAcao] = useState<string | null>(null);
 
   useEffect(() => {
     const t = window.setTimeout(() => {
@@ -35,32 +36,93 @@ export default function EleicaoComprovantePage() {
     return <EleicaoLayout><EleicaoMensagem titulo="Voto registrado" mensagem="Preparando seu comprovante..." /></EleicaoLayout>;
   }
 
-  async function copiarComprovante() {
+  function mostrarMensagem(texto: string) {
+    setMensagemAcao(texto);
+    window.setTimeout(() => setMensagemAcao(null), 2500);
+  }
+
+  async function copiarTexto(texto: string) {
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(texto);
+        return true;
+      } catch {
+        // Continua para o fallback compatível com HTTP/rede local.
+      }
+    }
+
     try {
-      await navigator.clipboard.writeText(comprovante);
-      setCopiado(true);
-      window.setTimeout(() => setCopiado(false), 1800);
+      const textarea = document.createElement("textarea");
+      textarea.value = texto;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      textarea.style.top = "0";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      textarea.setSelectionRange(0, textarea.value.length);
+
+      const ok = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      return ok;
     } catch {
-      setCopiado(false);
+      return false;
+    }
+  }
+
+  async function copiarComprovante() {
+    const ok = await copiarTexto(comprovante);
+    setCopiado(ok);
+
+    if (ok) {
+      mostrarMensagem("Código do comprovante copiado.");
+      window.setTimeout(() => setCopiado(false), 1800);
+    } else {
+      mostrarMensagem("Não foi possível copiar automaticamente. Selecione o código e copie manualmente.");
     }
   }
 
   async function compartilharComprovante() {
-    const texto = `Comprovante de votação\n${entidade?.nome_exibicao || "Sistema de Votação Digital"}\n\n${comprovante}`;
+    const texto = [
+      "COMPROVANTE DE VOTAÇÃO",
+      entidade?.nome_exibicao || "Sistema de Votação Digital",
+      "",
+      `Código: ${comprovante}`,
+      "",
+      "Este comprovante confirma apenas o registro da participação e não revela a opção escolhida no voto.",
+    ].join("\n");
 
-    if (navigator.share) {
+    if (window.isSecureContext && typeof navigator.share === "function") {
       try {
         await navigator.share({
           title: "Comprovante de votação",
           text: texto,
         });
+        mostrarMensagem("Comprovante compartilhado.");
         return;
-      } catch {
-        return;
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          return;
+        }
       }
     }
 
-    await copiarComprovante();
+    const urlWhatsApp = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+    const novaJanela = window.open(urlWhatsApp, "_blank", "noopener,noreferrer");
+
+    if (novaJanela) {
+      mostrarMensagem("Abrindo opções de compartilhamento no WhatsApp.");
+      return;
+    }
+
+    const copiou = await copiarTexto(texto);
+    if (copiou) {
+      mostrarMensagem("Compartilhamento não disponível neste navegador. O texto foi copiado.");
+    } else {
+      mostrarMensagem("Não foi possível abrir o compartilhamento neste navegador.");
+    }
   }
 
   return (
@@ -98,7 +160,7 @@ export default function EleicaoComprovantePage() {
           <div className="px-5 py-6 sm:px-7 sm:py-7">
             <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4 sm:p-5">
               <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-[var(--muted)]">Código do comprovante</p>
-              <p className="mt-3 break-all font-mono text-sm font-black leading-7 tracking-[0.04em] text-[var(--foreground)] sm:text-base">
+              <p className="mt-3 break-all select-all font-mono text-sm font-black leading-7 tracking-[0.04em] text-[var(--foreground)] sm:text-base">
                 {comprovante}
               </p>
             </div>
@@ -111,6 +173,12 @@ export default function EleicaoComprovantePage() {
                 Este comprovante confirma apenas o registro da participação. Ele não contém nem permite identificar a opção escolhida no voto.
               </p>
             </div>
+
+            {mensagemAcao ? (
+              <div className="mt-4 rounded-xl border border-[var(--line)] bg-white px-4 py-3 text-center text-sm font-semibold text-[var(--foreground)]" role="status">
+                {mensagemAcao}
+              </div>
+            ) : null}
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">
               <Button size="lg" variant="secondary" onClick={copiarComprovante} icon={<Icon name="copy" />}>
