@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 
 import { EleicaoLayout } from "@/components/eleicao/EleicaoLayout";
 import { EleicaoLoading } from "@/components/eleicao/EleicaoLoading";
-import { EleicaoMensagem } from "@/components/eleicao/EleicaoMensagem";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
@@ -182,11 +181,23 @@ export default function EleicaoConfirmacaoPage() {
             </div>
           </div>
 
+          {mensagemErro ? (
+            <div role="alert" className="mt-4 flex gap-3 rounded-2xl border border-red-200 bg-[var(--danger-soft)] px-4 py-3 text-sm leading-6 text-red-800">
+              <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-white/80">
+                <Icon name="x" className="size-3.5" />
+              </span>
+              <div>
+                <strong>Não foi possível enviar ou validar o código.</strong>
+                <div>{mensagemErro}</div>
+              </div>
+            </div>
+          ) : null}
+
           <label className="mt-5 block text-sm font-bold text-[var(--foreground)]">
             Código de confirmação
             <Input
               aria-label="Código de confirmação"
-              className="mt-2 h-14 text-center font-mono text-2xl font-black tracking-[0.45em]"
+              className="mt-2 h-14 text-center font-mono text-2xl font-black tracking-[0.22em]"
               inputMode="numeric"
               maxLength={6}
               pattern="[0-9]*"
@@ -207,18 +218,6 @@ export default function EleicaoConfirmacaoPage() {
               <span>Código expirado. Solicite um novo código.</span>
             )}
           </div>
-
-          {mensagemErro ? (
-            <div role="alert" className="mt-5 flex gap-3 rounded-2xl border border-red-200 bg-[var(--danger-soft)] px-4 py-3 text-sm leading-6 text-red-800">
-              <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-white/80">
-                <Icon name="x" className="size-3.5" />
-              </span>
-              <div>
-                <strong>Não foi possível enviar ou validar o código.</strong>
-                <div>{mensagemErro}</div>
-              </div>
-            </div>
-          ) : null}
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             <Button size="lg" onClick={onConfirmar} disabled={validando || codigo.length !== 6} type="button" icon={<Icon name="check" />}>
@@ -250,4 +249,5 @@ export default function EleicaoConfirmacaoPage() {
         </div>
       </div>
     </EleicaoLayout>
-  );}
+  );
+}
