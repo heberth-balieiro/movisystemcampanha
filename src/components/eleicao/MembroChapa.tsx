@@ -25,8 +25,8 @@ export function MembroChapa({ membro }: Props) {
   const exibirFoto = Boolean(fotoUrl) && !fotoFalhou;
 
   return (
-    <div className="flex min-w-0 items-center gap-3">
-      <div className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full border border-[var(--line)] bg-[var(--brand-soft)] text-xs font-black text-[var(--brand)]">
+    <div className="flex min-w-0 items-center gap-4 rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-3.5">
+      <div className="grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[var(--line)] bg-white text-sm font-black text-[var(--brand)] shadow-sm sm:size-[72px]">
         {exibirFoto ? (
           <img
             alt={`Foto de ${membro.nome}`}
@@ -38,12 +38,23 @@ export function MembroChapa({ membro }: Props) {
             src={fotoUrl ?? undefined}
           />
         ) : (
-          <span aria-hidden="true">{obterIniciais(membro.nome)}</span>
+          <span aria-hidden="true" className="grid h-full w-full place-items-center bg-[var(--brand-soft)]">
+            {obterIniciais(membro.nome)}
+          </span>
         )}
       </div>
-      <div className="min-w-0 text-sm">
-        <div className="truncate font-semibold text-[var(--foreground)]">{membro.nome}</div>
-        <div className="mt-0.5 text-xs font-medium text-[var(--muted)]">{membro.cargo}{membro.tipo ? ` • ${membro.tipo}` : ""}</div>
+
+      <div className="min-w-0">
+        <div className="truncate text-sm font-black text-[var(--foreground)] sm:text-base">{membro.nome}</div>
+        {membro.cargo ? (
+          <div className="mt-1 text-xs font-bold uppercase tracking-[0.1em] text-[var(--brand)]">{membro.cargo}</div>
+        ) : null}
+        {membro.tipo ? (
+          <div className="mt-1 text-xs font-medium text-[var(--muted)]">{membro.tipo}</div>
+        ) : null}
+        {membro.observacao ? (
+          <div className="mt-2 line-clamp-2 text-xs leading-5 text-[var(--muted)]">{membro.observacao}</div>
+        ) : null}
       </div>
     </div>
   );
