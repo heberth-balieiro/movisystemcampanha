@@ -7,6 +7,7 @@ export type IconName =
   | "cart"
   | "category"
   | "check"
+  | "copy"
   | "dashboard"
   | "eye"
   | "login"
@@ -17,6 +18,7 @@ export type IconName =
   | "save"
   | "search"
   | "settings"
+  | "share"
   | "store"
   | "trend"
   | "whatsapp"
@@ -40,6 +42,7 @@ const paths: Record<IconName, string> = {
   cart: "M6 6h15l-2 8H8L6 3H3m6 16a1 1 0 1 0 0 .01M18 19a1 1 0 1 0 0 .01",
   category: "M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z",
   check: "m5 12 4 4L19 6",
+  copy: "M9 9h10v10H9V9Zm-4 6H4V4h11v1",
   dashboard: "M4 13h7V4H4v9Zm9 7h7V4h-7v16ZM4 20h7v-5H4v5Z",
   eye: "M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z",
   login: "M14 7 19 12l-5 5M19 12H7M3 4v16h8",
@@ -51,6 +54,7 @@ const paths: Record<IconName, string> = {
   search: "m21 21-4.3-4.3M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z",
   settings:
     "M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM19.4 15a8.2 8.2 0 0 0 .1-2l2-1.5-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 5h-6l-.4 3a8 8 0 0 0-1.7 1l-2.4-1-2 3.5 2 1.5a8.2 8.2 0 0 0 .1 2l-2.1 1.5 2 3.5 2.4-1a8 8 0 0 0 1.7 1l.4 3h6l.4-3a8 8 0 0 0 1.7-1l2.4 1 2-3.5L19.4 15Z",
+  share: "M18 8a3 3 0 1 0-2.8-4H15a3 3 0 0 0 .4 1.5L8.9 9.2A3 3 0 0 0 4 12a3 3 0 0 0 4.9 2.3l6.5 3.7A3 3 0 1 0 17 16.2l-6.4-3.7a3.1 3.1 0 0 0 0-1l6.4-3.7c.3.1.6.2 1 .2Z",
   store: "M4 10h16l-1-5H5l-1 5Zm1 0v10h14V10M8 20v-6h8v6M4 10a3 3 0 0 0 6 0M10 10a3 3 0 0 0 6 0M16 10a3 3 0 0 0 6 0",
   trend: "M4 18 10 12l4 4 6-10M15 6h5v5",
   whatsapp:
