@@ -109,7 +109,14 @@ export function EleicaoFooter({ email, telefone, instagramUrl, facebookUrl, yout
       </div>
 
       <div className="mt-6 border-t border-[var(--line)] pt-4 text-center text-xs font-semibold">
-        {anoAtual} Cone Sul Sistemas
+        <a
+          className="focus-ring rounded transition hover:text-[var(--brand)]"
+          href="https://movisystem.com.br"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          {anoAtual} MoviSystem tecnologia
+        </a>
         <span className="mx-2 text-[var(--line)]">|</span>
         Sistema de Votação Digital
       </div>
