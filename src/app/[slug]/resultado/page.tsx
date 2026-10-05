@@ -15,6 +15,17 @@ function ResumoCard({ valor, label }: { valor: number; label: string }) {
   );
 }
 
+function formatarPercentual(valor: number) {
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function formatarVotos(valor: number) {
+  return `${valor} ${valor === 1 ? "voto" : "votos"}`;
+}
+
 export default async function ResultadoPublicoPage({ params }: Props) {
   const { slug } = await params;
   let response;
@@ -76,6 +87,8 @@ export default async function ResultadoPublicoPage({ params }: Props) {
               {dados.chapas.map((chapa) => {
                 const largura = Math.round((chapa.quantidade_votos / maxVotos) * 100);
                 const maisVotada = chapa.quantidade_votos > 0 && chapa.quantidade_votos === maxVotos;
+                const percentualFormatado = formatarPercentual(chapa.percentual);
+
                 return (
                   <article key={chapa.id} className={`rounded-2xl border p-4 sm:p-5 ${maisVotada ? "border-[var(--brand)]/30 bg-[var(--brand-soft)]" : "border-[var(--line)] bg-white"}`}>
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -84,8 +97,8 @@ export default async function ResultadoPublicoPage({ params }: Props) {
                         <div className="mt-1 text-base font-black">{chapa.nome}</div>
                       </div>
                       <div className="text-left sm:text-right">
-                        <div className="text-lg font-black">{chapa.quantidade_votos} votos</div>
-                        <div className="text-sm font-semibold text-[var(--muted)]">{String(chapa.percentual)}%</div>
+                        <div className="text-lg font-black">{formatarVotos(chapa.quantidade_votos)}</div>
+                        <div className="mt-0.5 text-base font-extrabold text-[var(--brand-strong)]">{percentualFormatado}%</div>
                       </div>
                     </div>
                     <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-slate-200">
