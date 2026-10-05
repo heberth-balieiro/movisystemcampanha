@@ -102,6 +102,82 @@ function buildRequestBody(body: unknown, headers: Headers): BodyInit | undefined
   return JSON.stringify(body);
 }
 
+/**
+ * Compatibilidade temporária para respostas legadas da API Delphi.
+ * Algumas units antigas podem ser compiladas com codepage diferente de UTF-8,
+ * gerando caracteres como "�" ou sequências "Ã..." no JSON.
+ * A normalização fica centralizada aqui para proteger todas as telas que usam apiFetch.
+ */
+function normalizarTextoApi(value: string): string {
+  let result = value;
+
+  const mojibake: Array<[string, string]> = [
+    ["Ã£", "ã"], ["Ãµ", "õ"], ["Ã¡", "á"], ["Ã©", "é"],
+    ["Ã­", "í"], ["Ã³", "ó"], ["Ãº", "ú"], ["Ã§", "ç"],
+    ["Ã¢", "â"], ["Ãª", "ê"], ["Ã´", "ô"], ["Ã€", "À"],
+    ["Ã", "Á"], ["Ã‰", "É"], ["Ã“", "Ó"], ["Ãš", "Ú"],
+    ["Ã‡", "Ç"], ["Âº", "º"], ["Âª", "ª"], ["Â°", "°"],
+  ];
+
+  for (const [errado, correto] of mojibake) {
+    result = result.split(errado).join(correto);
+  }
+
+  // Quando o byte inválido já chegou ao navegador como U+FFFD (�),
+  // não existe informação suficiente para reconstruir qualquer caractere.
+  // Corrigimos os termos de domínio/retornos conhecidos da API de eleição.
+  const substituicoes: Array<[RegExp, string]> = [
+    [/N�o/g, "Não"], [/n�o/g, "não"],
+    [/poss�vel/g, "possível"], [/Poss�vel/g, "Possível"],
+    [/j�/g, "já"], [/J�/g, "Já"],
+    [/elei��o/g, "eleição"], [/Elei��o/g, "Eleição"],
+    [/vota��o/g, "votação"], [/Vota��o/g, "Votação"],
+    [/identifica��o/g, "identificação"], [/Identifica��o/g, "Identificação"],
+    [/confirma��o/g, "confirmação"], [/Confirma��o/g, "Confirmação"],
+    [/configura��o/g, "configuração"], [/Configura��o/g, "Configuração"],
+    [/sess�o/g, "sessão"], [/Sess�o/g, "Sessão"],
+    [/c�digo/g, "código"], [/C�digo/g, "Código"],
+    [/matr�cula/g, "matrícula"], [/Matr�cula/g, "Matrícula"],
+    [/inv�lid([oa])/g, "inválid$1"], [/Inv�lid([oa])/g, "Inválid$1"],
+    [/per�odo/g, "período"], [/Per�odo/g, "Período"],
+    [/in�cio/g, "início"], [/In�cio/g, "Início"],
+    [/usu�rio/g, "usuário"], [/Usu�rio/g, "Usuário"],
+    [/dispon�vel/g, "disponível"], [/Dispon�vel/g, "Disponível"],
+    [/op��o/g, "opção"], [/Op��o/g, "Opção"],
+    [/op��es/g, "opções"], [/Op��es/g, "Opções"],
+    [/apura��o/g, "apuração"], [/Apura��o/g, "Apuração"],
+    [/publica��o/g, "publicação"], [/Publica��o/g, "Publicação"],
+    [/conex�o/g, "conexão"], [/Conex�o/g, "Conexão"],
+    [/autorizado �/g, "autorizado à"], [/acesso �/g, "acesso à"],
+  ];
+
+  for (const [pattern, replacement] of substituicoes) {
+    result = result.replace(pattern, replacement);
+  }
+
+  return result;
+}
+
+function normalizarPayloadApi<T>(value: T): T {
+  if (typeof value === "string") {
+    return normalizarTextoApi(value) as T;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => normalizarPayloadApi(item)) as T;
+  }
+
+  if (value && typeof value === "object") {
+    const output: Record<string, unknown> = {};
+    for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
+      output[key] = normalizarPayloadApi(item);
+    }
+    return output as T;
+  }
+
+  return value;
+}
+
 async function parseApiResponse<T>(response: Response): Promise<ApiResponse<T>> {
   if (response.status === 204) {
     return {
@@ -111,7 +187,8 @@ async function parseApiResponse<T>(response: Response): Promise<ApiResponse<T>> 
     };
   }
 
-  const payload = (await response.json().catch(() => null)) as ApiResponse<T> | null;
+  const payloadBruto = (await response.json().catch(() => null)) as ApiResponse<T> | null;
+  const payload = payloadBruto ? normalizarPayloadApi(payloadBruto) : null;
 
   if (response.status === 401) {
     throw new ApiHttpError(payload?.mensagem || "Sessão expirada. Faça login novamente.", 401);
