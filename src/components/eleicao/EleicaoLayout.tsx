@@ -1,12 +1,14 @@
 "use client";
 
 import type { CSSProperties, ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 import { imagemBase64 } from "@/lib/image";
 import { useEleicaoEntidade } from "@/components/eleicao/EleicaoContext";
 import { ConectividadeAviso } from "@/components/eleicao/ConectividadeAviso";
 import { EleicaoFooter } from "@/components/eleicao/EleicaoFooter";
 import { EleicaoHeader } from "@/components/eleicao/EleicaoHeader";
+import { AdminEvolucaoApuracao } from "@/components/eleicao/AdminEvolucaoApuracao";
 import { Card, CardContent } from "@/components/ui/card";
 
 type EleicaoLayoutProps = {
@@ -29,7 +31,6 @@ type EleicaoStyle = CSSProperties & {
   "--brand-contrast"?: string;
   "--accent"?: string;
 };
-
 
 function getBrandContrast(cor?: string | null) {
   if (!cor) return undefined;
@@ -60,6 +61,7 @@ export function EleicaoLayout({
   maxWidthClass = "max-w-6xl",
 }: EleicaoLayoutProps) {
   const entidade = useEleicaoEntidade();
+  const pathname = usePathname();
   const nomeFinal = nomeEntidade ?? entidade?.nome_exibicao;
   const logoFinal = logoUrl ?? imagemBase64(entidade?.logo);
   const corPrimariaFinal = corPrimaria ?? entidade?.cor_primaria;
@@ -77,6 +79,9 @@ export function EleicaoLayout({
     ...(corSecundariaFinal ? { "--accent": corSecundariaFinal } : {}),
   };
 
+  const adminPainelMatch = pathname?.match(/^\/([^/]+)\/admin\/painel\/?$/i);
+  const slugAdmin = adminPainelMatch?.[1] ? decodeURIComponent(adminPainelMatch[1]) : null;
+
   return (
     <main className="election-shell min-h-screen px-3 py-4 sm:px-5 sm:py-7 lg:px-6 lg:py-8" style={style}>
       <div className={`mx-auto flex min-h-[calc(100vh-32px)] w-full ${maxWidthClass} flex-col sm:min-h-[calc(100vh-56px)] lg:min-h-[calc(100vh-64px)]`}>
@@ -89,6 +94,7 @@ export function EleicaoLayout({
         <Card className="overflow-hidden rounded-2xl border-[var(--line)] bg-white/95 shadow-[0_24px_70px_-42px_rgba(15,23,42,0.42)] backdrop-blur-sm">
           <CardContent className="p-4 sm:p-6 lg:p-8">{children}</CardContent>
         </Card>
+        {slugAdmin ? <AdminEvolucaoApuracao slug={slugAdmin} /> : null}
         <div className="mt-auto">
           <EleicaoFooter
             email={emailFinal}
