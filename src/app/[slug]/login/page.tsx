@@ -122,15 +122,23 @@ export default function EleicaoLoginPage() {
                 </span>
                 <Input
                   autoComplete="off"
-                  className="h-12 pl-11"
+                  className="h-12 pl-11 pr-11"
                   disabled={isLoading}
                   inputMode="numeric"
                   onChange={(event) => setMatricula(somenteDigitos(event.target.value))}
                   placeholder="Informe sua matrícula"
-                  type="text"
+                  type="password"
                   value={matricula}
                 />
+                {matricula ? (
+                  <span className="pointer-events-none absolute inset-y-0 right-0 grid w-11 place-items-center text-[var(--muted)]">
+                    <Icon name="eye" />
+                  </span>
+                ) : null}
               </div>
+              <span className="mt-2 block text-xs font-medium text-[var(--muted)]">
+                Sua matrícula fica oculta durante a digitação.
+              </span>
             </label>
           </div>
 
