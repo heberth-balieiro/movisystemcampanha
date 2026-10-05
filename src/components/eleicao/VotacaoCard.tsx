@@ -176,7 +176,7 @@ export function VotacaoCard({ slug, eleicao, entidade }: VotacaoCardProps) {
           </ButtonLink>
 
           <ButtonLink
-            href={`/${slug}/admin`}
+            href={`/${slug}/admin/login`}
             icon={<Icon name="settings" />}
             size="lg"
             variant="ghost"
