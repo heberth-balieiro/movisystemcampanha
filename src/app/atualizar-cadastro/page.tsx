@@ -23,6 +23,15 @@ function somenteNumeros(valor: string) {
   return valor.replace(/\D/g, "");
 }
 
+function formatarCPF(valor: string) {
+  const numeros = somenteNumeros(valor).slice(0, 11);
+
+  return numeros
+    .replace(/^(\d{3})(\d)/, "$1.$2")
+    .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+    .replace(/\.(\d{3})(\d)/, ".$1-$2");
+}
+
 export default function AtualizarCadastroPage() {
   const [etapa, setEtapa] = useState<Etapa>("identificacao");
   const [cpf, setCpf] = useState("");
@@ -145,8 +154,8 @@ export default function AtualizarCadastroPage() {
                 <p className="mt-2 text-sm leading-6 text-slate-500">Informe os mesmos dados utilizados no cadastro da sua entidade.</p>
               </div>
 
-              <label className="block"><span className="mb-2 block text-sm font-bold">CPF</span><input value={cpf} onChange={(e) => setCpf(somenteNumeros(e.target.value).slice(0, 11))} inputMode="numeric" autoComplete="off" placeholder="Somente números" className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10" required /></label>
-              <label className="block"><span className="mb-2 block text-sm font-bold">Matrícula</span><input value={matricula} onChange={(e) => setMatricula(somenteNumeros(e.target.value).slice(0, 20))} inputMode="numeric" autoComplete="off" placeholder="Informe sua matrícula" className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10" required /></label>
+              <label className="block"><span className="mb-2 block text-sm font-bold">CPF</span><input value={formatarCPF(cpf)} onChange={(e) => setCpf(somenteNumeros(e.target.value).slice(0, 11))} inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10" required /></label>
+              <label className="block"><span className="mb-2 block text-sm font-bold">Matrícula</span><input value={matricula} onChange={(e) => setMatricula(somenteNumeros(e.target.value).slice(0, 20))} type="password" inputMode="numeric" autoComplete="off" placeholder="Informe sua matrícula" className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 outline-none transition focus:border-slate-950 focus:ring-2 focus:ring-slate-950/10" required /><span className="mt-2 block text-xs text-slate-500">Sua matrícula fica oculta durante a digitação.</span></label>
 
               {erro ? <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-700">{erro}</div> : null}
               <button type="submit" disabled={loading || cpf.length !== 11 || !matricula} className="h-12 w-full rounded-xl bg-slate-950 px-4 font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">{loading ? "Validando..." : "Continuar"}</button>
