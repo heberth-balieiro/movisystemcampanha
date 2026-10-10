@@ -79,6 +79,13 @@ export default function EleicaoVotacaoPage() {
     }
   }
 
+  function sairDaVotacao() {
+    limparSessaoEleicao(slug);
+    setChapaSelecionada(null);
+    setTipoAlternativo(null);
+    router.replace(`/${slug}`);
+  }
+
   if (loading) {
     return (
       <EleicaoLayout>
@@ -105,7 +112,7 @@ export default function EleicaoVotacaoPage() {
             >
               Tentar novamente
             </Button>
-            <Button variant="secondary" onClick={() => router.replace(`/${slug}`)} type="button">Voltar para a eleição</Button>
+            <Button variant="secondary" onClick={sairDaVotacao} type="button">Sair</Button>
           </div>
         </EleicaoMensagem>
       </EleicaoLayout>
@@ -115,7 +122,9 @@ export default function EleicaoVotacaoPage() {
   if (!data) {
     return (
       <EleicaoLayout>
-        <EleicaoMensagem titulo="Realizar votação" mensagem="Cédula vazia." />
+        <EleicaoMensagem titulo="Realizar votação" mensagem="Cédula vazia.">
+          <Button variant="secondary" onClick={sairDaVotacao} type="button">Sair</Button>
+        </EleicaoMensagem>
       </EleicaoLayout>
     );
   }
@@ -164,9 +173,14 @@ export default function EleicaoVotacaoPage() {
               {eleicao.descricao ? <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--muted)] sm:text-base">{eleicao.descricao}</p> : null}
             </div>
 
-            <div className="flex w-fit items-center gap-2 rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm font-bold text-[var(--muted)] shadow-sm">
-              <Icon name="calendar" className="text-[var(--brand)]" />
-              Ano {eleicao.ano}
+            <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+              <div className="flex w-fit items-center gap-2 rounded-2xl border border-[var(--line)] bg-white px-4 py-3 text-sm font-bold text-[var(--muted)] shadow-sm">
+                <Icon name="calendar" className="text-[var(--brand)]" />
+                Ano {eleicao.ano}
+              </div>
+              <Button variant="secondary" size="sm" onClick={sairDaVotacao} type="button">
+                Sair
+              </Button>
             </div>
           </div>
         </header>
@@ -234,7 +248,10 @@ export default function EleicaoVotacaoPage() {
               <div>Na próxima tela você ainda poderá conferir a opção antes de registrar o voto.</div>
             </div>
           </div>
-          <Button className="w-full sm:w-auto" size="lg" disabled={!possuiSelecao} onClick={continuar} type="button" icon={<Icon name="arrow-right" />}>Continuar</Button>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <Button className="w-full sm:w-auto" variant="secondary" size="lg" onClick={sairDaVotacao} type="button">Sair</Button>
+            <Button className="w-full sm:w-auto" size="lg" disabled={!possuiSelecao} onClick={continuar} type="button" icon={<Icon name="arrow-right" />}>Continuar</Button>
+          </div>
         </div>
       </div>
     </EleicaoLayout>
