@@ -140,6 +140,7 @@ export default function AdminDadosEleicaoPage() {
           <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel`)}>Painel</Button>
           <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel`)}>Relatórios</Button>
           <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel`)}>Auditoria</Button>
+          <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel/contingencia`)}>Contingência</Button>
           <Button className="flex-1 sm:flex-none" size="sm" variant="primary">Dados da eleição</Button>
         </nav>
 
