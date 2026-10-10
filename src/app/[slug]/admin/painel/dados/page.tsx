@@ -9,7 +9,7 @@ import { EleicaoLoading } from "@/components/eleicao/EleicaoLoading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { imagemBase64 } from "@/lib/image";
-import { obterTokenAdmin } from "@/services/eleicao/eleicao-session.service";
+import { adminPodeGerarCodigoContingencia, obterTokenAdmin } from "@/services/eleicao/eleicao-session.service";
 import { buscarEleicaoPorSlug } from "@/services/eleicao/eleicao.service";
 import type { EleicaoPublicaDados } from "@/types/eleicao";
 
@@ -45,6 +45,7 @@ export default function AdminDadosEleicaoPage() {
   const { slug } = useParams() as { slug: string };
   const router = useRouter();
   const entidadeContexto = useEleicaoEntidade();
+  const podeGerarCodigoContingencia = adminPodeGerarCodigoContingencia(slug);
   const [dados, setDados] = useState<EleicaoPublicaDados | null>(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -140,7 +141,9 @@ export default function AdminDadosEleicaoPage() {
           <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel`)}>Painel</Button>
           <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel`)}>Relatórios</Button>
           <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel`)}>Auditoria</Button>
-          <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel/contingencia`)}>Contingência</Button>
+          {podeGerarCodigoContingencia ? (
+            <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel/contingencia`)}>Contingência</Button>
+          ) : null}
           <Button className="flex-1 sm:flex-none" size="sm" variant="primary">Dados da eleição</Button>
         </nav>
 
