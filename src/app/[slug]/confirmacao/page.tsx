@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import {
+  getUserFriendlyConfirmationError,
   solicitarCodigoPorEmail,
   type CanalConfirmacao,
   type SolicitarCodigoContingenciaDados,
@@ -92,14 +93,14 @@ export default function EleicaoConfirmacaoPage() {
           router.replace(`/${slug}/login`);
           return;
         }
-        setMensagemErro(response.mensagem || "Não foi possível enviar o código de confirmação.");
+        setMensagemErro(getUserFriendlyConfirmationError("WHATSAPP", response.mensagem));
         return;
       }
       if (response.dados) {
         aplicarDadosEnvio(response.dados as DadosEnvioCodigo);
       }
     } catch {
-      setMensagemErro("Não foi possível enviar o código de confirmação.");
+      setMensagemErro(getUserFriendlyConfirmationError("WHATSAPP"));
     } finally {
       setEnviando(false);
     }
@@ -138,7 +139,7 @@ export default function EleicaoConfirmacaoPage() {
           router.replace(`/${slug}/login`);
           return;
         }
-        setMensagemErro(response.mensagem || "Código inválido ou expirado.");
+        setMensagemErro(getUserFriendlyConfirmationError("VALIDACAO", response.mensagem));
         return;
       }
       if (response.dados.confirmado === "S" && response.dados.token_votacao) {
@@ -147,9 +148,9 @@ export default function EleicaoConfirmacaoPage() {
         router.replace(`/${slug}/votacao`);
         return;
       }
-      setMensagemErro(response.mensagem || "Não foi possível confirmar o código.");
+      setMensagemErro(getUserFriendlyConfirmationError("VALIDACAO", response.mensagem));
     } catch {
-      setMensagemErro("Erro ao validar o código.");
+      setMensagemErro(getUserFriendlyConfirmationError("VALIDACAO"));
     } finally {
       setValidando(false);
     }
@@ -186,14 +187,14 @@ export default function EleicaoConfirmacaoPage() {
           router.replace(`/${slug}/login`);
           return;
         }
-        setMensagemErro(response.mensagem || "Não foi possível enviar o código por e-mail.");
+        setMensagemErro(getUserFriendlyConfirmationError("EMAIL", response.mensagem));
         return;
       }
 
       aplicarDadosEnvio(response.dados);
       setCodigo("");
     } catch {
-      setMensagemErro("Não foi possível enviar o código por e-mail.");
+      setMensagemErro(getUserFriendlyConfirmationError("EMAIL"));
     } finally {
       setEnviando(false);
     }
@@ -251,7 +252,7 @@ export default function EleicaoConfirmacaoPage() {
                 <Icon name="x" className="size-3.5" />
               </span>
               <div>
-                <strong>Não foi possível enviar ou validar o código.</strong>
+                <strong>Não foi possível concluir esta etapa.</strong>
                 <div>{mensagemErro}</div>
               </div>
             </div>
