@@ -1,21 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HomeCarousel } from "@/components/plataforma/HomeCarousel";
+import { PublicProcesses } from "@/components/plataforma/PublicProcesses";
 import { SiteFooter } from "@/components/plataforma/SiteFooter";
 import { SiteHeader } from "@/components/plataforma/SiteHeader";
-
-const processos = [
-  {
-    tipo: "ELEIÇÃO",
-    titulo: "Eleições online",
-    descricao: "Os processos eleitorais abertos das entidades aparecerão aqui assim que a listagem pública for conectada à API.",
-  },
-  {
-    tipo: "ASSEMBLEIA",
-    titulo: "Assembleias e deliberações",
-    descricao: "Assembleias em andamento e próximas consultas também serão exibidas nesta área da plataforma.",
-  },
-];
 
 const recursos = [
   "Votação por chapa",
@@ -99,35 +87,15 @@ export default function HomePage() {
 
       <section id="processos" className="border-y border-[#dbe5e1] bg-white py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
-            <div>
-              <p className="text-sm font-black uppercase tracking-[0.18em] text-[#00745c]">Participação aberta</p>
-              <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Eleições e assembleias</h2>
-              <p className="mt-3 max-w-2xl text-base leading-7 text-[#5a6979]">
-                Esta área será alimentada pela API pública e mostrará processos disponíveis para participação em todas as entidades que utilizam a plataforma.
-              </p>
-            </div>
-            <span className="inline-flex w-fit rounded-full bg-[#edf8f4] px-4 py-2 text-xs font-bold text-[#006b57] ring-1 ring-[#b9e0d5]">
-              Integração com a API será a próxima etapa
-            </span>
+          <div>
+            <p className="text-sm font-black uppercase tracking-[0.18em] text-[#00745c]">Participação aberta</p>
+            <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Eleições e assembleias</h2>
+            <p className="mt-3 max-w-2xl text-base leading-7 text-[#5a6979]">
+              Encontre processos publicados pelas entidades que utilizam a plataforma MoviSystem. Eleições e assembleias em andamento aparecem primeiro, seguidas pelos próximos processos.
+            </p>
           </div>
 
-          <div className="mt-9 grid gap-5 md:grid-cols-2">
-            {processos.map((processo) => (
-              <article key={processo.tipo} className="group rounded-3xl border border-[#dbe5e1] bg-[#f7faf9] p-6 transition hover:-translate-y-0.5 hover:border-[#9fd4c5] hover:shadow-xl hover:shadow-[#006b57]/5 sm:p-7">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="rounded-full bg-[#dff5ee] px-3 py-1 text-xs font-black tracking-wide text-[#006b57]">{processo.tipo}</span>
-                  <span className="text-xs font-bold text-[#91a0ad]">Em breve</span>
-                </div>
-                <h3 className="mt-5 text-xl font-black">{processo.titulo}</h3>
-                <p className="mt-3 text-sm leading-6 text-[#5b6978]">{processo.descricao}</p>
-                <div className="mt-6 flex items-center gap-2 text-sm font-bold text-[#006b57]">
-                  <span>Processos públicos aparecerão automaticamente</span>
-                  <span aria-hidden="true">→</span>
-                </div>
-              </article>
-            ))}
-          </div>
+          <PublicProcesses />
         </div>
       </section>
 
