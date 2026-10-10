@@ -83,6 +83,7 @@ export function EleicaoFooter({ email, telefone, instagramUrl, facebookUrl, yout
             <Link className="focus-ring block rounded font-semibold text-[var(--foreground)] transition hover:text-[var(--brand)]" href={`${baseHref}/sobre`}>Sobre a plataforma</Link>
             <Link className="focus-ring block rounded font-semibold text-[var(--foreground)] transition hover:text-[var(--brand)]" href={`${baseHref}/termos`}>Termos de Uso</Link>
             <Link className="focus-ring block rounded font-semibold text-[var(--foreground)] transition hover:text-[var(--brand)]" href={`${baseHref}/privacidade`}>Privacidade e Proteção de Dados</Link>
+            <Link className="focus-ring block rounded font-semibold text-[var(--foreground)] transition hover:text-[var(--brand)]" href={`${baseHref}/como-usar`}>Como usar</Link>
           </nav>
         </section>
 
