@@ -31,6 +31,7 @@ export default function AdminContingenciaPage() {
   const [gerandoId, setGerandoId] = useState<number | null>(null);
   const [eleitorSelecionado, setEleitorSelecionado] = useState<EleitorContingencia | null>(null);
   const [codigoGerado, setCodigoGerado] = useState<CodigoTemporarioGerado | null>(null);
+  const [codigoCopiado, setCodigoCopiado] = useState(false);
 
   useEffect(() => {
     if (!tokenAdmin) {
@@ -74,6 +75,7 @@ export default function AdminContingenciaPage() {
     setGerandoId(eleitor.id_usuario);
     setErro(null);
     setCodigoGerado(null);
+    setCodigoCopiado(false);
     setEleitorSelecionado(eleitor);
     try {
       const response = await gerarCodigoTemporario(slug, tokenAdmin, eleitor.id_usuario);
@@ -95,8 +97,31 @@ export default function AdminContingenciaPage() {
   }
 
   async function copiarCodigo() {
-    if (!codigoGerado?.codigo) return;
-    await navigator.clipboard.writeText(codigoGerado.codigo);
+    const codigo = codigoGerado?.codigo;
+    if (!codigo) return;
+
+    setErro(null);
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(codigo);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = codigo;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        const copiado = document.execCommand("copy");
+        document.body.removeChild(textarea);
+        if (!copiado) throw new Error("copy unavailable");
+      }
+      setCodigoCopiado(true);
+      window.setTimeout(() => setCodigoCopiado(false), 2000);
+    } catch {
+      setCodigoCopiado(false);
+      setErro("Não foi possível copiar o código automaticamente. Selecione o código e copie manualmente.");
+    }
   }
 
   if (loading) {
@@ -199,7 +224,9 @@ export default function AdminContingenciaPage() {
                   Expira em {Math.ceil(codigoGerado.validade_segundos / 60)} minuto(s) — {new Date(codigoGerado.expira_em).toLocaleString("pt-BR")}
                 </div>
               </div>
-              <Button variant="secondary" onClick={() => void copiarCodigo()} icon={<Icon name="copy" />}>Copiar código</Button>
+              <Button variant="secondary" onClick={() => void copiarCodigo()} icon={<Icon name="copy" />}>
+                {codigoCopiado ? "Código copiado" : "Copiar código"}
+              </Button>
             </div>
           </section>
         ) : null}
