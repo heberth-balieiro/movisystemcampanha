@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 
 import { EleicaoLayout } from "@/components/eleicao/EleicaoLayout";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -15,7 +16,7 @@ type Passo = {
   numero: string;
   titulo: string;
   icone: Parameters<typeof Icon>[0]["name"];
-  conteudo: React.ReactNode;
+  conteudo: ReactNode;
 };
 
 export default async function ComoUsarPage({ params }: Props) {
