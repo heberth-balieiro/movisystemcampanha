@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Icon } from "@/components/ui/icon";
-import { limparSessaoAdmin, mensagemIndicaSessaoExpirada, obterTokenAdmin } from "@/services/eleicao/eleicao-session.service";
+import { adminPodeGerarCodigoContingencia, limparSessaoAdmin, mensagemIndicaSessaoExpirada, obterTokenAdmin } from "@/services/eleicao/eleicao-session.service";
 import {
   buscarEleitoresContingencia,
   gerarCodigoTemporario,
@@ -21,6 +21,7 @@ export default function AdminContingenciaPage() {
   const { slug } = useParams() as { slug: string };
   const router = useRouter();
   const tokenAdmin = obterTokenAdmin(slug);
+  const podeGerarCodigo = adminPodeGerarCodigoContingencia(slug);
 
   const [termo, setTermo] = useState("");
   const [eleitores, setEleitores] = useState<EleitorContingencia[]>([]);
@@ -37,12 +38,17 @@ export default function AdminContingenciaPage() {
       return;
     }
 
+    if (!podeGerarCodigo) {
+      router.replace(`/${slug}/admin/painel`);
+      return;
+    }
+
     void carregarEleitores();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router, slug]);
 
   async function carregarEleitores() {
-    if (!tokenAdmin) return;
+    if (!tokenAdmin || !podeGerarCodigo) return;
     setBuscando(true);
     setErro(null);
     try {
@@ -65,7 +71,7 @@ export default function AdminContingenciaPage() {
   }
 
   async function onGerar(eleitor: EleitorContingencia) {
-    if (!tokenAdmin || eleitor.ja_votou) return;
+    if (!tokenAdmin || !podeGerarCodigo || eleitor.ja_votou) return;
 
     setGerandoId(eleitor.id_usuario);
     setErro(null);
@@ -197,7 +203,7 @@ export default function AdminContingenciaPage() {
         ) : null}
 
         <section className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4 text-sm leading-6 text-[var(--muted)]">
-          <strong className="text-[var(--foreground)]">Segurança:</strong> o operador não escolhe o código. A geração é limitada e registrada com empresa, eleição, eleitor, operador, data/hora, status e expiração.
+          <strong className="text-[var(--foreground)]">Segurança:</strong> esta área exige permissão específica de contingência. O código nunca é registrado em auditoria; são registrados apenas empresa, eleição, eleitor, operador, origem, data/hora, status e expiração.
         </section>
       </div>
     </EleicaoLayout>
