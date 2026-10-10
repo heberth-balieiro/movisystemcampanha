@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 
+import { WhatsAppFloat } from "@/components/plataforma/WhatsAppFloat";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sistema de Votação Digital | Cone Sul Sistemas",
-  description: "Sistema de votação digital da Cone Sul Sistemas.",
+  title: "MoviSystem | Eleições e Assembleias Online",
+  description: "Plataforma MoviSystem para eleições, assembleias, participação digital e gestão de processos eleitorais.",
   icons: {
     icon: [
       { url: "/favicon.ico" },
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1e6f5c",
+  themeColor: "#00866a",
 };
 
 export default function RootLayout({
@@ -26,7 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" data-scroll-behavior="smooth">
-      <body>{children}</body>
+      <body>
+        {children}
+        <WhatsAppFloat />
+      </body>
     </html>
   );
 }
