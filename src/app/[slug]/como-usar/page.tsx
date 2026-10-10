@@ -54,32 +54,59 @@ export default async function ComoUsarPage({ params }: Props) {
     },
     {
       numero: "03",
-      titulo: "Receba o código",
+      titulo: "Receba o código pelo WhatsApp",
       icone: "whatsapp",
       mockup: "whatsapp",
       conteudo: (
         <>
           <p>Após sua identificação, o sistema solicita automaticamente um código de confirmação.</p>
-          <p>O código de <strong>6 dígitos</strong> é enviado ao <strong>WhatsApp cadastrado</strong>.</p>
+          <p>O código de <strong>6 dígitos</strong> é enviado primeiro ao <strong>WhatsApp cadastrado</strong>.</p>
+          <p>Aguarde o recebimento antes de solicitar uma nova tentativa.</p>
         </>
       ),
       observacao: "Não compartilhe o código de confirmação com outras pessoas.",
     },
     {
       numero: "04",
-      titulo: "Informe o código",
-      icone: "check",
+      titulo: "Reenvie se necessário",
+      icone: "whatsapp",
       mockup: "codigo",
       conteudo: (
         <>
-          <p>Digite os 6 dígitos recebidos no campo <strong>Código de confirmação</strong>.</p>
-          <p>Selecione <strong>Confirmar código</strong> para continuar.</p>
-          <p>Se o código expirar ou não chegar, aguarde o tempo indicado e use <strong>Reenviar código</strong> quando a opção estiver disponível.</p>
+          <p>Digite os 6 dígitos recebidos no campo <strong>Código de confirmação</strong> e selecione <strong>Confirmar código</strong>.</p>
+          <p>Se a mensagem não chegar ou o código expirar, aguarde o tempo indicado e use <strong>Reenviar código</strong>.</p>
+          <p>O sistema informará quando um novo envio estiver disponível.</p>
         </>
       ),
     },
     {
       numero: "05",
+      titulo: "Receba por e-mail",
+      icone: "mail",
+      mockup: "codigo",
+      conteudo: (
+        <>
+          <p>Se o reenvio pelo WhatsApp não resolver e houver um e-mail disponível para seu cadastro, a opção <strong>Receber por e-mail</strong> será apresentada.</p>
+          <p>Use o novo código recebido por e-mail no mesmo campo <strong>Código de confirmação</strong>.</p>
+        </>
+      ),
+      observacao: "A alternativa por e-mail aparece somente quando esse canal estiver disponível para o seu cadastro.",
+    },
+    {
+      numero: "06",
+      titulo: "Peça orientação à entidade",
+      icone: "users",
+      mockup: "codigo",
+      conteudo: (
+        <>
+          <p>Se você não consegue acessar nenhum dos canais de confirmação, entre em contato com a <strong>entidade responsável pela eleição</strong>.</p>
+          <p>A entidade poderá orientar você sobre como prosseguir com segurança.</p>
+        </>
+      ),
+      observacao: "Nunca compartilhe sua senha nem o conteúdo do seu voto ao solicitar ajuda.",
+    },
+    {
+      numero: "07",
       titulo: "Escolha seu voto",
       icone: "ticket",
       mockup: "cedula",
@@ -92,7 +119,7 @@ export default async function ComoUsarPage({ params }: Props) {
       ),
     },
     {
-      numero: "06",
+      numero: "08",
       titulo: "Revise sua escolha",
       icone: "eye",
       mockup: "revisao",
@@ -104,7 +131,7 @@ export default async function ComoUsarPage({ params }: Props) {
       ),
     },
     {
-      numero: "07",
+      numero: "09",
       titulo: "Confirme seu voto",
       icone: "save",
       mockup: "confirmacao",
@@ -120,7 +147,7 @@ export default async function ComoUsarPage({ params }: Props) {
       ),
     },
     {
-      numero: "08",
+      numero: "10",
       titulo: "Guarde seu comprovante",
       icone: "ticket",
       mockup: "comprovante",
@@ -136,8 +163,16 @@ export default async function ComoUsarPage({ params }: Props) {
 
   const duvidas = [
     {
-      pergunta: "Não recebi meu código. O que devo fazer?",
-      resposta: "O código é enviado ao WhatsApp cadastrado. Aguarde o tempo indicado na tela e use “Reenviar código” quando a opção estiver disponível. Se o problema continuar, confira seus dados junto à entidade responsável pela eleição.",
+      pergunta: "Não recebi meu código no WhatsApp. O que devo fazer?",
+      resposta: "Aguarde o tempo indicado na tela e use “Reenviar código”. Se ainda não receber e houver e-mail disponível no seu cadastro, a opção “Receber por e-mail” será apresentada.",
+    },
+    {
+      pergunta: "Posso receber o código por e-mail?",
+      resposta: "Sim, quando houver um e-mail disponível para o seu cadastro. A alternativa por e-mail é apresentada depois da tentativa de reenvio pelo WhatsApp.",
+    },
+    {
+      pergunta: "Não tenho acesso ao WhatsApp nem ao e-mail. O que faço?",
+      resposta: "Entre em contato com a entidade responsável pela eleição para receber orientação sobre como prosseguir.",
     },
     {
       pergunta: "Posso alterar meu voto?",
