@@ -30,6 +30,7 @@ function removeLegacyKeys() {
 
 type JwtPayload = {
   exp?: number;
+  roles?: string[];
 };
 
 function decodeJwtPayload(token: string): JwtPayload | null {
@@ -52,6 +53,22 @@ export function tokenJwtExpirado(token: string, margemSegundos = 10) {
   const payload = decodeJwtPayload(token);
   if (!payload || typeof payload.exp !== "number") return false;
   return Date.now() >= payload.exp * 1000 - margemSegundos * 1000;
+}
+
+export function tokenPossuiRole(token: string | null | undefined, role: string) {
+  if (!token || typeof window === "undefined") return false;
+  const payload = decodeJwtPayload(token);
+  if (!payload || !Array.isArray(payload.roles)) return false;
+  const roleNormalizada = role.trim().toUpperCase();
+  return payload.roles.some((item) => String(item).trim().toUpperCase() === roleNormalizada);
+}
+
+export function adminPodeGerarCodigoContingencia(slug: string) {
+  const token = obterTokenAdmin(slug);
+  if (!token) return false;
+
+  return tokenPossuiRole(token, "ELEICAO_GERAR_CODIGO_CONTINGENCIA") ||
+    tokenPossuiRole(token, "ADMIN");
 }
 
 export function mensagemIndicaSessaoExpirada(message: string | null | undefined) {
