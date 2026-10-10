@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Brand } from "@/components/plataforma/Brand";
 import { HomeCarousel } from "@/components/plataforma/HomeCarousel";
+import { SiteFooter } from "@/components/plataforma/SiteFooter";
+import { SiteHeader } from "@/components/plataforma/SiteHeader";
 
 const processos = [
   {
@@ -28,33 +29,7 @@ const recursos = [
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#f4f7f6] text-[#07131f]">
-      <header className="sticky top-0 z-40 border-b border-[#dbe5e1] bg-white/95 backdrop-blur">
-        <div className="mx-auto flex min-h-20 max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-          <Brand />
-
-          <nav className="hidden items-center gap-7 text-sm font-semibold text-[#42546a] lg:flex" aria-label="Navegação principal">
-            <a href="#processos" className="transition hover:text-[#00866a]">Eleições e assembleias</a>
-            <a href="#como-funciona" className="transition hover:text-[#00866a]">Como funciona</a>
-            <a href="#sobre" className="transition hover:text-[#00866a]">Sobre</a>
-            <a href="#contato" className="transition hover:text-[#00866a]">Contato</a>
-          </nav>
-
-          <div className="flex items-center gap-2">
-            <Link
-              href="/atualizar-cadastro"
-              className="hidden rounded-xl px-3 py-2 text-sm font-bold text-[#314255] transition hover:bg-[#edf4f1] sm:inline-flex"
-            >
-              Atualizar cadastro
-            </Link>
-            <Link
-              href="/acesso"
-              className="rounded-xl bg-[#07131f] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#006b57]"
-            >
-              Acessar
-            </Link>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-x-0 top-0 -z-10 h-[620px] bg-[radial-gradient(circle_at_20%_15%,rgba(0,134,106,0.12),transparent_34%),radial-gradient(circle_at_84%_12%,rgba(4,54,76,0.08),transparent_30%)]" />
@@ -217,7 +192,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="sobre" className="py-16 sm:py-20">
+      <section className="py-16 sm:py-20">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <div className="rounded-[2rem] bg-[#006b57] p-7 text-white sm:p-10">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#b9eadc]">Sobre a MoviSystem</p>
@@ -225,51 +200,28 @@ export default function HomePage() {
             <p className="mt-5 leading-7 text-[#e6f7f2]">
               A MoviSystem desenvolve soluções digitais voltadas à gestão, comunicação e participação. O módulo de Eleições &amp; Assembleias amplia esse ecossistema com processos eleitorais e deliberativos online.
             </p>
+            <Link href="/sobre" className="mt-7 inline-flex rounded-xl bg-white px-5 py-3 text-sm font-bold text-[#006b57] transition hover:bg-[#edf8f4]">
+              Conheça a MoviSystem
+            </Link>
           </div>
 
-          <div id="contato" className="rounded-[2rem] border border-[#dbe5e1] bg-white p-7 sm:p-10">
+          <div className="rounded-[2rem] border border-[#dbe5e1] bg-white p-7 sm:p-10">
             <p className="text-sm font-black uppercase tracking-[0.18em] text-[#7b8997]">Contato</p>
             <h2 className="mt-3 text-2xl font-black">Fale com a MoviSystem</h2>
-            <p className="mt-4 leading-7 text-[#5a6979]">
-              Este espaço está reservado para os canais oficiais de atendimento comercial, suporte, telefone, e-mail e endereço da empresa. Os dados serão publicados somente após confirmação oficial.
-            </p>
-            <p className="mt-6 text-sm font-semibold text-[#697888]">Desenvolvimento e operação da plataforma: MoviSystem.</p>
+            <div className="mt-5 grid gap-3 text-sm leading-6 text-[#5a6979]">
+              <a href="mailto:comercial@movisystem.com.br" className="font-semibold hover:text-[#006b57]">comercial@movisystem.com.br</a>
+              <a href="mailto:contato@movisystem.com.br" className="font-semibold hover:text-[#006b57]">contato@movisystem.com.br</a>
+              <a href="https://wa.me/5569992161179" target="_blank" rel="noreferrer" className="font-semibold hover:text-[#006b57]">+55 69 99216-1179</a>
+              <a href="https://www.instagram.com/movi.system" target="_blank" rel="noreferrer" className="font-semibold hover:text-[#006b57]">Instagram @movi.system</a>
+            </div>
+            <Link href="/contato" className="mt-7 inline-flex rounded-xl bg-[#07131f] px-5 py-3 text-sm font-bold text-white transition hover:bg-[#006b57]">
+              Ver todos os contatos
+            </Link>
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-[#112637] bg-[#07131f] text-slate-300">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-4 lg:px-8">
-          <div className="md:col-span-2">
-            <Brand variant="dark" className="max-w-[190px]" />
-            <p className="mt-5 max-w-md text-sm leading-6 text-slate-400">
-              Plataforma MoviSystem para eleições, assembleias, participação digital e gestão de processos eleitorais.
-            </p>
-          </div>
-          <div>
-            <strong className="text-sm text-white">Plataforma</strong>
-            <div className="mt-4 grid gap-3 text-sm text-slate-400">
-              <a href="#processos" className="hover:text-white">Eleições e assembleias</a>
-              <Link href="/atualizar-cadastro" className="hover:text-white">Atualizar cadastro</Link>
-              <Link href="/acesso" className="hover:text-white">Acesso administrativo</Link>
-            </div>
-          </div>
-          <div>
-            <strong className="text-sm text-white">MoviSystem</strong>
-            <div className="mt-4 grid gap-3 text-sm text-slate-400">
-              <a href="#sobre" className="hover:text-white">Sobre a empresa</a>
-              <a href="#contato" className="hover:text-white">Contato</a>
-              <span>Desenvolvido pela MoviSystem</span>
-            </div>
-          </div>
-        </div>
-        <div className="border-t border-[#112637]">
-          <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-slate-500 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
-            <span>© 2026 MoviSystem. Todos os direitos reservados.</span>
-            <span>Eleições &amp; Assembleias Online</span>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }
