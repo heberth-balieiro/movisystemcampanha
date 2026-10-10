@@ -41,6 +41,7 @@ export default function EleicaoConfirmacaoPage() {
   const [codigo, setCodigo] = useState("");
   const [validando, setValidando] = useState(false);
   const [enviando, setEnviando] = useState(false);
+  const [reenviouWhatsapp, setReenviouWhatsapp] = useState(false);
 
   useEffect(() => {
     const t = window.setTimeout(() => {
@@ -164,6 +165,7 @@ export default function EleicaoConfirmacaoPage() {
 
     await solicitarCodigo(tokenIdentificacao);
     setCodigo("");
+    setReenviouWhatsapp(true);
   }
 
   async function onReceberPorEmail() {
@@ -202,6 +204,8 @@ export default function EleicaoConfirmacaoPage() {
   }
 
   const usandoEmail = canal === "EMAIL";
+  const mostrarEmail = reenviouWhatsapp && emailDisponivel;
+  const mostrarContato = reenviouWhatsapp;
 
   return (
     <EleicaoLayout subtitulo="Confirme sua identidade para continuar com segurança.">
@@ -227,11 +231,14 @@ export default function EleicaoConfirmacaoPage() {
         <section className="mt-7 rounded-[24px] border border-[var(--line)] bg-white p-5 shadow-[0_20px_50px_-38px_rgba(15,23,42,0.45)] sm:p-7">
           <div className="flex gap-3 rounded-2xl border border-[var(--brand)]/15 bg-[var(--brand-soft)] p-4 text-sm leading-6 text-[var(--brand-strong)]">
             <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-white/80 text-[var(--brand)] shadow-sm">
-              <Icon name={usandoEmail ? "mail" : "user"} />
+              <Icon name={usandoEmail ? "mail" : "whatsapp"} />
             </span>
             <div>
-              {nomeAssociado ? <p className="font-extrabold text-[var(--foreground)]">Olá, {nomeAssociado}.</p> : null}
-              <p>
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-[var(--brand)]">
+                {usandoEmail ? "Receber por e-mail" : "Enviar pelo WhatsApp"}
+              </p>
+              {nomeAssociado ? <p className="mt-1 font-extrabold text-[var(--foreground)]">Olá, {nomeAssociado}.</p> : null}
+              <p className="mt-1">
                 Enviamos um código de confirmação para o {usandoEmail ? "e-mail" : "WhatsApp"} cadastrado.
               </p>
               {destino ? <p className="mt-1 font-mono font-bold text-[var(--foreground)]">{destino}</p> : null}
@@ -285,25 +292,31 @@ export default function EleicaoConfirmacaoPage() {
             </Button>
           </div>
 
-          <div className="mt-5 space-y-3 text-center text-sm text-[var(--muted)]">
-            {reenviarSegundos > 0 ? (
-              <span>Você poderá solicitar um novo código em <strong>{reenviarSegundos}s</strong>.</span>
-            ) : (
-              <Button
-                variant="ghost"
-                onClick={onReenviarWhatsapp}
-                size="sm"
-                type="button"
-                disabled={enviando}
-                icon={<Icon name="whatsapp" />}
-              >
-                {enviando && !usandoEmail ? "Enviando..." : "Reenviar código pelo WhatsApp"}
-              </Button>
-            )}
+          <div className="mt-6 space-y-4 text-sm text-[var(--muted)]">
+            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4 text-center">
+              <p className="text-xs font-black uppercase tracking-[0.12em] text-[var(--brand)]">Reenviar código</p>
+              {reenviarSegundos > 0 ? (
+                <p className="mt-2">Você poderá solicitar um novo código em <strong>{reenviarSegundos}s</strong>.</p>
+              ) : (
+                <div className="mt-3">
+                  <Button
+                    variant="ghost"
+                    onClick={onReenviarWhatsapp}
+                    size="sm"
+                    type="button"
+                    disabled={enviando}
+                    icon={<Icon name="whatsapp" />}
+                  >
+                    {enviando && !usandoEmail ? "Enviando..." : "Reenviar código"}
+                  </Button>
+                </div>
+              )}
+            </div>
 
-            {emailDisponivel ? (
-              <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4">
-                <p className="text-sm font-semibold text-[var(--foreground)]">Não recebeu pelo WhatsApp?</p>
+            {mostrarEmail ? (
+              <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4 text-center">
+                <p className="text-xs font-black uppercase tracking-[0.12em] text-[var(--brand)]">Receber por e-mail</p>
+                <p className="mt-2 text-sm font-semibold text-[var(--foreground)]">Ainda não recebeu pelo WhatsApp?</p>
                 {emailDestino ? (
                   <p className="mt-1 text-xs text-[var(--muted)]">
                     Podemos enviar um novo código para <span className="font-mono font-bold text-[var(--foreground)]">{emailDestino}</span>.
@@ -318,9 +331,16 @@ export default function EleicaoConfirmacaoPage() {
                     disabled={enviando || reenviarSegundos > 0}
                     icon={<Icon name="mail" />}
                   >
-                    {enviando && usandoEmail ? "Enviando..." : "Receber código por e-mail"}
+                    {enviando && usandoEmail ? "Enviando..." : "Receber por e-mail"}
                   </Button>
                 </div>
+              </div>
+            ) : null}
+
+            {mostrarContato ? (
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-center text-amber-900">
+                <p className="font-bold">Não consegue acessar nenhum dos canais?</p>
+                <p className="mt-1">Entre em contato com a entidade responsável pela eleição para receber orientação.</p>
               </div>
             ) : null}
           </div>
