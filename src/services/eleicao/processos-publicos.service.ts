@@ -1,4 +1,5 @@
-import { apiFetch, resolverApiMediaUrl } from "@/services/api";
+import { imagemBase64 } from "@/lib/image";
+import { apiFetch } from "@/services/api";
 
 export type ProcessoPublico = {
   id: number;
@@ -30,7 +31,7 @@ export async function listarProcessosPublicos(): Promise<ProcessoPublicoView[]> 
 
   return (response.dados ?? []).map((item) => ({
     ...item,
-    logo_url: resolverApiMediaUrl(item.logo),
-    banner_url: resolverApiMediaUrl(item.banner),
+    logo_url: imagemBase64(item.logo),
+    banner_url: imagemBase64(item.banner),
   }));
 }
