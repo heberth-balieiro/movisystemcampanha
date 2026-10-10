@@ -35,7 +35,7 @@ export function HomeCarousel() {
   }, []);
 
   return (
-    <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/10">
+    <div className="relative overflow-hidden rounded-[2rem] bg-[#07131f] text-white shadow-2xl shadow-[#07131f]/10">
       <div className="relative min-h-[360px] sm:min-h-[430px]">
         {slides.map((slide, index) => (
           <div
@@ -48,9 +48,9 @@ export function HomeCarousel() {
               alt=""
               className="absolute inset-0 h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/20" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#07131f] via-[#07131f]/90 to-[#006b57]/25" />
             <div className="relative flex min-h-[360px] max-w-2xl flex-col justify-end p-7 sm:min-h-[430px] sm:p-10 lg:p-12">
-              <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-300">{slide.eyebrow}</p>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-[#62d6b7]">{slide.eyebrow}</p>
               <h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">{slide.title}</h2>
               <p className="mt-4 max-w-xl text-base leading-7 text-slate-200 sm:text-lg">{slide.text}</p>
             </div>
@@ -64,7 +64,7 @@ export function HomeCarousel() {
             key={slide.title}
             type="button"
             onClick={() => setActive(index)}
-            className={`h-2.5 rounded-full transition-all ${index === active ? "w-8 bg-white" : "w-2.5 bg-white/45 hover:bg-white/70"}`}
+            className={`h-2.5 rounded-full transition-all ${index === active ? "w-8 bg-[#62d6b7]" : "w-2.5 bg-white/45 hover:bg-white/70"}`}
             aria-label={`Exibir destaque ${index + 1}`}
             aria-current={index === active ? "true" : undefined}
           />
