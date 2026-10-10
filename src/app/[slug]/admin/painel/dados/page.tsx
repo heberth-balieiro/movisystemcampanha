@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+import { AdminPainelNav } from "@/components/eleicao/AdminPainelNav";
 import { useEleicaoEntidade } from "@/components/eleicao/EleicaoContext";
 import { EleicaoLayout } from "@/components/eleicao/EleicaoLayout";
 import { EleicaoLoading } from "@/components/eleicao/EleicaoLoading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { imagemBase64 } from "@/lib/image";
-import { adminPodeGerarCodigoContingencia, obterTokenAdmin } from "@/services/eleicao/eleicao-session.service";
+import { obterTokenAdmin } from "@/services/eleicao/eleicao-session.service";
 import { buscarEleicaoPorSlug } from "@/services/eleicao/eleicao.service";
 import type { EleicaoPublicaDados } from "@/types/eleicao";
 
@@ -45,7 +46,6 @@ export default function AdminDadosEleicaoPage() {
   const { slug } = useParams() as { slug: string };
   const router = useRouter();
   const entidadeContexto = useEleicaoEntidade();
-  const podeGerarCodigoContingencia = adminPodeGerarCodigoContingencia(slug);
   const [dados, setDados] = useState<EleicaoPublicaDados | null>(null);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -80,11 +80,7 @@ export default function AdminDadosEleicaoPage() {
   }, [router, slug]);
 
   if (loading) {
-    return (
-      <EleicaoLayout maxWidthClass="max-w-7xl">
-        <EleicaoLoading />
-      </EleicaoLayout>
-    );
+    return <EleicaoLayout maxWidthClass="max-w-7xl"><EleicaoLoading /></EleicaoLayout>;
   }
 
   if (erro || !dados) {
@@ -93,9 +89,7 @@ export default function AdminDadosEleicaoPage() {
         <div className="mx-auto max-w-xl rounded-2xl border border-red-200 bg-[var(--danger-soft)] p-6 text-center">
           <h1 className="text-lg font-black text-red-900">Não foi possível carregar os dados</h1>
           <p className="mt-2 text-sm text-red-800">{erro || "Os dados da eleição não foram retornados."}</p>
-          <Button className="mt-5" variant="secondary" onClick={() => router.replace(`/${slug}/admin/painel`)}>
-            Voltar ao painel
-          </Button>
+          <Button className="mt-5" variant="secondary" onClick={() => router.replace(`/${slug}/admin/painel`)}>Voltar ao painel</Button>
         </div>
       </EleicaoLayout>
     );
@@ -114,11 +108,7 @@ export default function AdminDadosEleicaoPage() {
           <div className="flex flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex min-w-0 items-center gap-4">
               <div className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[var(--line)] bg-white shadow-sm sm:size-24">
-                {logo ? (
-                  <img src={logo} alt={`Logo ${entidade?.nome_exibicao || "da entidade"}`} className="h-full w-full object-contain p-2" />
-                ) : (
-                  <span className="text-xl font-black text-[var(--brand)]">{(entidade?.nome_exibicao || "EV").split(/\s+/).slice(0, 2).map((parte) => parte[0]).join("").toUpperCase()}</span>
-                )}
+                {logo ? <img src={logo} alt={`Logo ${entidade?.nome_exibicao || "da entidade"}`} className="h-full w-full object-contain p-2" /> : <span className="text-xl font-black text-[var(--brand)]">{(entidade?.nome_exibicao || "EV").split(/\s+/).slice(0, 2).map((parte) => parte[0]).join("").toUpperCase()}</span>}
               </div>
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
@@ -130,22 +120,22 @@ export default function AdminDadosEleicaoPage() {
                 <p className="mt-1 text-sm font-semibold text-[var(--muted)]">{entidade?.nome_exibicao}</p>
               </div>
             </div>
-
-            <Button variant="secondary" onClick={() => router.replace(`/${slug}/admin/painel`)}>
-              Voltar ao painel
-            </Button>
+            <Button variant="secondary" onClick={() => router.replace(`/${slug}/admin/painel`)}>Voltar ao painel</Button>
           </div>
         </section>
 
-        <nav className="inline-flex w-full flex-wrap rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] p-1 sm:w-auto">
-          <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel`)}>Painel</Button>
-          <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel`)}>Relatórios</Button>
-          <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel`)}>Auditoria</Button>
-          {podeGerarCodigoContingencia ? (
-            <Button className="flex-1 sm:flex-none" size="sm" variant="ghost" onClick={() => router.replace(`/${slug}/admin/painel/contingencia`)}>Contingência</Button>
-          ) : null}
-          <Button className="flex-1 sm:flex-none" size="sm" variant="primary">Dados da eleição</Button>
-        </nav>
+        <AdminPainelNav slug={slug} ativa="dados" />
+
+        <section className="rounded-3xl border border-[var(--line)] bg-white p-5 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[var(--brand)]">Comunicação</p>
+              <h2 className="mt-1 text-xl font-black">Configuração de e-mail</h2>
+              <p className="mt-1 text-sm text-[var(--muted)]">Visualize e configure o SMTP utilizado pela contingência por e-mail.</p>
+            </div>
+            <Button onClick={() => router.push(`/${slug}/admin/painel/dados/email`)}>Configurar e-mail</Button>
+          </div>
+        </section>
 
         <section className="rounded-3xl border border-[var(--line)] bg-white p-5 shadow-sm sm:p-6">
           <div>
@@ -153,14 +143,12 @@ export default function AdminDadosEleicaoPage() {
             <h2 className="mt-1 text-xl font-black">Dados gerais</h2>
             <p className="mt-1 text-sm text-[var(--muted)]">Informações cadastradas para este processo. Esta tela não permite alterações.</p>
           </div>
-
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <Campo label="Código" valor={eleicao.codigo} />
             <Campo label="Tipo" valor={tipoEleicao(eleicao.tipo)} />
             <Campo label="Ano" valor={eleicao.ano} />
             <Campo label="Situação" valor={eleicao.situacao} />
           </div>
-
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             <Campo label="Nome" valor={eleicao.nome} />
             <Campo label="Descrição" valor={eleicao.descricao} />
@@ -175,7 +163,6 @@ export default function AdminDadosEleicaoPage() {
             <h2 className="mt-1 text-xl font-black">Configurações do ambiente</h2>
             <p className="mt-1 text-sm text-[var(--muted)]">Identidade e informações exibidas no endereço público do slug.</p>
           </div>
-
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <Campo label="Slug" valor={entidade?.slug} />
             <Campo label="Nome de exibição" valor={entidade?.nome_exibicao} />
@@ -184,7 +171,6 @@ export default function AdminDadosEleicaoPage() {
             <Campo label="Telefone" valor={entidade?.telefone} />
             <Campo label="Mensagem de boas-vindas" valor={entidade?.mensagem_boas_vindas} />
           </div>
-
           <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <Campo label="Cor primária" valor={entidade?.cor_primaria} />
             <Campo label="Cor secundária" valor={entidade?.cor_secundaria} />
@@ -199,7 +185,6 @@ export default function AdminDadosEleicaoPage() {
             <p className="text-xs font-black uppercase tracking-[0.14em] text-[var(--brand)]">Identidade visual</p>
             <h2 className="mt-1 text-xl font-black">Logo e banner</h2>
           </div>
-
           <div className="mt-5 grid gap-4 lg:grid-cols-[0.35fr_0.65fr]">
             <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4">
               <div className="text-xs font-black uppercase tracking-[0.12em] text-[var(--muted)]">Logo</div>
@@ -207,7 +192,6 @@ export default function AdminDadosEleicaoPage() {
                 {logo ? <img src={logo} alt="Logo configurada" className="max-h-28 max-w-full object-contain" /> : <span className="text-sm text-[var(--muted)]">Não configurada</span>}
               </div>
             </div>
-
             <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4">
               <div className="text-xs font-black uppercase tracking-[0.12em] text-[var(--muted)]">Banner</div>
               <div className="mt-3 grid min-h-36 place-items-center overflow-hidden rounded-xl border border-[var(--line)] bg-white">
