@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { EleicaoProvider } from "@/components/eleicao/EleicaoContext";
-import { buscarEleicaoPorSlug } from "@/services/eleicao/eleicao.service";
+import { buscarEleicaoPorSlugLeve } from "@/services/eleicao/eleicao-publica-leve.service";
 import type { EleicaoEntidade } from "@/types/eleicao";
 
 type Props = {
@@ -14,7 +14,7 @@ export default async function SlugLayout({ children, params }: Props) {
   let entidade: EleicaoEntidade | null = null;
 
   try {
-    const dados = await buscarEleicaoPorSlug(slug);
+    const dados = await buscarEleicaoPorSlugLeve(slug);
     entidade = dados.entidade;
   } catch {
     // A página filha continuará responsável pela mensagem de erro/slug inválido.
