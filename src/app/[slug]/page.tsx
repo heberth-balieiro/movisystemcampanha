@@ -3,7 +3,8 @@ import { EleicaoLoading } from "@/components/eleicao/EleicaoLoading";
 import { EleicaoMensagem } from "@/components/eleicao/EleicaoMensagem";
 import { VotacaoCard } from "@/components/eleicao/VotacaoCard";
 import { Icon } from "@/components/ui/icon";
-import { buscarEleicaoPorSlug, EleicaoPublicaNaoEncontradaError } from "@/services/eleicao/eleicao.service";
+import { EleicaoPublicaNaoEncontradaError } from "@/services/eleicao/eleicao.service";
+import { buscarEleicaoPorSlugLeve } from "@/services/eleicao/eleicao-publica-leve.service";
 import type { EleicaoPaginaEstado, EleicaoPublicaDados } from "@/types/eleicao";
 import { imagemBase64 } from "@/lib/image";
 
@@ -62,6 +63,7 @@ function EleicaoConteudo({
           <img
             src={bannerSrc}
             alt={`Banner ${entidade.nome_exibicao}`}
+            loading="lazy"
             className="max-h-[240px] w-full object-cover transition duration-500 group-hover:scale-[1.01]"
           />
         </section>
@@ -139,7 +141,7 @@ export default async function EleicaoSlugPage({ params }: SlugPageProps) {
   let dados: EleicaoPublicaDados | null = null;
 
   try {
-    dados = await buscarEleicaoPorSlug(slug);
+    dados = await buscarEleicaoPorSlugLeve(slug);
   } catch (error) {
     estado = error instanceof EleicaoPublicaNaoEncontradaError ? "slug-nao-encontrado" : "erro-comunicacao";
   }
