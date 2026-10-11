@@ -46,6 +46,8 @@ export default function EleicaoConfirmacaoPage() {
   const [validando, setValidando] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [reenviouWhatsapp, setReenviouWhatsapp] = useState(false);
+  const [falhaWhatsapp, setFalhaWhatsapp] = useState(false);
+  const [falhaEmail, setFalhaEmail] = useState(false);
 
   useEffect(() => {
     const t = window.setTimeout(() => {
@@ -84,6 +86,8 @@ export default function EleicaoConfirmacaoPage() {
     setExpiraSegundos(dados.expira_em_segundos || 0);
     setReenviarSegundos(dados.reenviar_em_segundos || 0);
     setStatusEnvio("ENVIADO");
+    if (dados.canal === "EMAIL") setFalhaEmail(false);
+    if (dados.canal === "WHATSAPP") setFalhaWhatsapp(false);
   }
 
   async function carregarCanaisAlternativos(tokenIdentificacao: string) {
@@ -112,6 +116,8 @@ export default function EleicaoConfirmacaoPage() {
           return;
         }
         setStatusEnvio("FALHA");
+        setFalhaWhatsapp(true);
+        setFalhaEmail(false);
         setExpiraSegundos(0);
         setReenviarSegundos(0);
         setMensagemErro(getUserFriendlyConfirmationError("WHATSAPP", response.mensagem));
@@ -123,6 +129,8 @@ export default function EleicaoConfirmacaoPage() {
       }
     } catch {
       setStatusEnvio("FALHA");
+      setFalhaWhatsapp(true);
+      setFalhaEmail(false);
       setExpiraSegundos(0);
       setReenviarSegundos(0);
       setMensagemErro(getUserFriendlyConfirmationError("WHATSAPP"));
@@ -217,14 +225,17 @@ export default function EleicaoConfirmacaoPage() {
           return;
         }
         setStatusEnvio("FALHA");
+        setFalhaEmail(true);
         setMensagemErro(getUserFriendlyConfirmationError("EMAIL", response.mensagem));
         return;
       }
 
       aplicarDadosEnvio(response.dados);
       setCodigo("");
+      setFalhaEmail(false);
     } catch {
       setStatusEnvio("FALHA");
+      setFalhaEmail(true);
       setMensagemErro(getUserFriendlyConfirmationError("EMAIL"));
     } finally {
       setEnviando(false);
@@ -238,8 +249,8 @@ export default function EleicaoConfirmacaoPage() {
   const usandoEmail = canal === "EMAIL";
   const envioFalhou = statusEnvio === "FALHA";
   const envioPendente = statusEnvio === "PENDENTE";
-  const mostrarEmail = emailDisponivel && (envioFalhou || reenviouWhatsapp || usandoEmail);
-  const mostrarContato = reenviouWhatsapp;
+  const mostrarEmail = emailDisponivel && (falhaWhatsapp || reenviouWhatsapp || usandoEmail);
+  const mostrarContato = falhaEmail || (falhaWhatsapp && !emailDisponivel);
 
   return (
     <EleicaoLayout subtitulo="Confirme sua identidade para continuar com segurança.">
@@ -365,7 +376,7 @@ export default function EleicaoConfirmacaoPage() {
               <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4 text-center">
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-[var(--brand)]">Receber por e-mail</p>
                 <p className="mt-2 text-sm font-semibold text-[var(--foreground)]">
-                  {envioFalhou && !usandoEmail ? "O WhatsApp não está disponível no momento?" : "Ainda não recebeu pelo WhatsApp?"}
+                  {falhaWhatsapp && !usandoEmail ? "O envio pelo WhatsApp falhou. Deseja usar o e-mail cadastrado?" : "Ainda não recebeu pelo WhatsApp?"}
                 </p>
                 {emailDestino ? (
                   <p className="mt-1 text-xs text-[var(--muted)]">
@@ -389,7 +400,7 @@ export default function EleicaoConfirmacaoPage() {
 
             {mostrarContato ? (
               <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-center text-amber-900">
-                <p className="font-bold">Não consegue acessar nenhum dos canais?</p>
+                <p className="font-bold">Não foi possível concluir o envio pelos canais disponíveis.</p>
                 <p className="mt-1">Entre em contato com a entidade responsável pela eleição para receber orientação.</p>
               </div>
             ) : null}
