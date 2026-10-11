@@ -1,4 +1,4 @@
-import { MembroChapa } from "@/components/eleicao/MembroChapa";
+import { FotoMembroChapa, MembroChapa } from "@/components/eleicao/MembroChapa";
 import type { EleicaoChapa } from "@/types/eleicao";
 
 type Props = {
@@ -8,6 +8,11 @@ type Props = {
 };
 
 export function ChapaCard({ chapa, selected = false, onClick }: Props) {
+  const representante =
+    chapa.membros.find((membro) => membro.cargo?.toUpperCase().includes("PRESIDENTE") && membro.tem_foto === "S") ??
+    chapa.membros.find((membro) => membro.tem_foto === "S") ??
+    chapa.membros.find((membro) => membro.cargo?.toUpperCase().includes("PRESIDENTE"));
+
   return (
     <button
       aria-pressed={selected}
@@ -23,12 +28,23 @@ export function ChapaCard({ chapa, selected = false, onClick }: Props) {
 
       <div className="p-5 sm:p-6">
         <div className="flex items-start justify-between gap-4">
-          <div className="min-w-0">
-            <div className="inline-flex rounded-full border border-[var(--brand)]/15 bg-[var(--brand-soft)] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[var(--brand-strong)]">
-              Chapa {String(chapa.numero).padStart(2, "0")}
+          <div className="flex min-w-0 items-start gap-4">
+            {representante ? (
+              <FotoMembroChapa membro={representante} className="size-20 rounded-[20px] sm:size-24" />
+            ) : null}
+
+            <div className="min-w-0">
+              <div className="inline-flex rounded-full border border-[var(--brand)]/15 bg-[var(--brand-soft)] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[var(--brand-strong)]">
+                Chapa {String(chapa.numero).padStart(2, "0")}
+              </div>
+              <h3 className="mt-3 text-xl font-black tracking-[-0.02em] text-[var(--foreground)] sm:text-2xl">{chapa.nome}</h3>
+              {chapa.slogan ? <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{chapa.slogan}</p> : null}
+              {representante ? (
+                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.08em] text-[var(--muted)]">
+                  {representante.cargo || "Representante"}: {representante.nome}
+                </p>
+              ) : null}
             </div>
-            <h3 className="mt-3 text-xl font-black tracking-[-0.02em] text-[var(--foreground)] sm:text-2xl">{chapa.nome}</h3>
-            {chapa.slogan ? <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{chapa.slogan}</p> : null}
           </div>
 
           <span
