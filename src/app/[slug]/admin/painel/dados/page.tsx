@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { imagemBase64 } from "@/lib/image";
 import { obterTokenAdmin } from "@/services/eleicao/eleicao-session.service";
-import { buscarEleicaoPorSlug } from "@/services/eleicao/eleicao.service";
+import { buscarEleicaoPorSlugLeve } from "@/services/eleicao/eleicao-publica-leve.service";
 import type { EleicaoPublicaDados } from "@/types/eleicao";
 
 type CampoProps = {
@@ -61,7 +61,7 @@ export default function AdminDadosEleicaoPage() {
     setLoading(true);
     setErro(null);
 
-    buscarEleicaoPorSlug(slug)
+    buscarEleicaoPorSlugLeve(slug)
       .then((response) => {
         if (!ativo) return;
         setDados(response);
@@ -189,13 +189,13 @@ export default function AdminDadosEleicaoPage() {
             <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4">
               <div className="text-xs font-black uppercase tracking-[0.12em] text-[var(--muted)]">Logo</div>
               <div className="mt-3 grid min-h-36 place-items-center rounded-xl border border-[var(--line)] bg-white p-4">
-                {logo ? <img src={logo} alt="Logo configurada" className="max-h-28 max-w-full object-contain" /> : <span className="text-sm text-[var(--muted)]">Não configurada</span>}
+                {logo ? <img src={logo} alt="Logo configurada" loading="lazy" className="max-h-28 max-w-full object-contain" /> : <span className="text-sm text-[var(--muted)]">Não configurada</span>}
               </div>
             </div>
             <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4">
               <div className="text-xs font-black uppercase tracking-[0.12em] text-[var(--muted)]">Banner</div>
               <div className="mt-3 grid min-h-36 place-items-center overflow-hidden rounded-xl border border-[var(--line)] bg-white">
-                {banner ? <img src={banner} alt="Banner configurado" className="max-h-56 w-full object-contain" /> : <span className="p-4 text-sm text-[var(--muted)]">Não configurado</span>}
+                {banner ? <img src={banner} alt="Banner configurado" loading="lazy" className="max-h-56 w-full object-contain" /> : <span className="p-4 text-sm text-[var(--muted)]">Não configurado</span>}
               </div>
             </div>
           </div>
