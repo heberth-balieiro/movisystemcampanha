@@ -48,17 +48,22 @@ function IconeCargo({ presidente }: { presidente: boolean }) {
 
 function SilhuetaMembro({ presidente }: { presidente: boolean }) {
   return (
-    <svg aria-hidden="true" className="h-28 w-28 text-[var(--brand)] opacity-[0.08]" viewBox="0 0 120 120" fill="none">
-      <circle cx="60" cy="34" r="20" fill="currentColor" />
+    <svg aria-hidden="true" className="h-28 w-28 text-[var(--brand)] opacity-[0.16] sm:h-32 sm:w-32" viewBox="0 0 120 120" fill="none">
       {presidente ? (
         <>
-          <path d="M28 105c3-27 14-42 32-42s29 15 32 42H28Z" fill="currentColor" />
-          <path d="m51 65 9 12 9-12-4 31H55l-4-31Z" fill="white" fillOpacity="0.58" />
+          <circle cx="60" cy="31" r="19" fill="currentColor" />
+          <path d="M29 108c2-28 13-44 31-44s29 16 31 44H29Z" fill="currentColor" />
+          <path d="M44 66 60 82 76 66l9 42H35l9-42Z" fill="currentColor" fillOpacity="0.72" />
+          <path d="m53 66 7 10 7-10-3 30h-8l-3-30Z" fill="white" fillOpacity="0.68" />
+          <path d="M41 66 52 60l8 8-14 12-5-14Zm38 0-11-6-8 8 14 12 5-14Z" fill="white" fillOpacity="0.38" />
         </>
       ) : (
         <>
-          <path d="M26 105c4-27 15-42 34-42 19 0 30 15 34 42H26Z" fill="currentColor" />
-          <path d="M42 27c5-13 13-19 25-17 10 2 17 11 17 24-7-8-16-12-26-12-5 0-11 2-16 5Z" fill="currentColor" />
+          <path d="M39 35c1-18 10-29 22-29 14 0 24 11 24 30 0 5-1 9-3 13-3-10-11-16-22-16-9 0-16 4-21 11V35Z" fill="currentColor" />
+          <ellipse cx="60" cy="36" rx="18" ry="21" fill="currentColor" />
+          <path d="M27 108c4-28 15-43 33-43 19 0 30 15 34 43H27Z" fill="currentColor" />
+          <path d="M38 39c-3 12-6 22-13 30 9 2 17 0 23-4m34-26c3 12 6 22 13 30-9 2-17 0-23-4" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+          <path d="M46 68c4 7 8 10 14 10s10-3 14-10l8 40H38l8-40Z" fill="currentColor" fillOpacity="0.72" />
         </>
       )}
     </svg>
@@ -96,11 +101,13 @@ export function MembroChapa({ membro }: Props) {
 
   return (
     <div className="relative flex min-w-0 items-center gap-4 overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-3.5 sm:p-4">
-      <div className="grid size-16 shrink-0 place-items-center rounded-2xl border border-[var(--line)] bg-[var(--brand-soft)] text-base font-black text-[var(--brand)] sm:size-[72px]">
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-0 w-2/5 bg-[radial-gradient(circle_at_bottom_right,var(--brand-soft),transparent_68%)] opacity-80" />
+
+      <div className="relative z-20 grid size-16 shrink-0 place-items-center rounded-2xl border border-[var(--line)] bg-[var(--brand-soft)] text-base font-black text-[var(--brand)] sm:size-[72px]">
         {obterIniciais(membro.nome)}
       </div>
 
-      <div className="relative z-10 min-w-0 flex-1 pr-16 sm:pr-24">
+      <div className="relative z-20 min-w-0 flex-1 pr-16 sm:pr-28">
         <div className="truncate text-sm font-black text-[var(--foreground)] sm:text-base">{membro.nome}</div>
         {membro.cargo ? (
           <div className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[var(--brand)]/10 bg-[var(--brand-soft)] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-[var(--brand-strong)] sm:text-xs">
@@ -112,10 +119,9 @@ export function MembroChapa({ membro }: Props) {
         {membro.observacao ? <div className="mt-2 line-clamp-2 text-xs leading-5 text-[var(--muted)]">{membro.observacao}</div> : null}
       </div>
 
-      <div className="pointer-events-none absolute -bottom-3 right-1">
+      <div className="pointer-events-none absolute -bottom-4 right-0 z-10 sm:right-2">
         <SilhuetaMembro presidente={presidente} />
       </div>
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-2/5 bg-[radial-gradient(circle_at_bottom_right,var(--brand-soft),transparent_68%)] opacity-70" />
     </div>
   );
 }
