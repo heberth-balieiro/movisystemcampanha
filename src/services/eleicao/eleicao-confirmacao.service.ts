@@ -18,6 +18,8 @@ export type SolicitarCodigoContingenciaResponse =
   ApiResponse<SolicitarCodigoContingenciaDados | null>;
 
 export type CanaisConfirmacaoDados = {
+  whatsapp_disponivel: boolean;
+  whatsapp_destino: string | null;
   email_disponivel: boolean;
   email_destino: string | null;
 };
