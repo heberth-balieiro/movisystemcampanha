@@ -12,6 +12,32 @@ import { buscarCedulaVotacao } from "@/services/eleicao/eleicao.service";
 import { limparSessaoEleicao, mensagemIndicaSessaoExpirada, obterTokenVotacao, salvarSelecaoVoto } from "@/services/eleicao/eleicao-session.service";
 import type { EleicaoVotacaoDados, TipoVoto } from "@/types/eleicao";
 
+function AlternativaVotoIlustracao({ tipo }: { tipo: Exclude<TipoVoto, "CHAPA"> }) {
+  const nulo = tipo === "NULO";
+
+  return (
+    <span
+      aria-hidden="true"
+      className={`grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[var(--line)] ${nulo ? "bg-red-50" : "bg-white"}`}
+    >
+      <svg className="size-12" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="15" y="8" width="34" height="48" rx="5" fill="white" stroke="currentColor" className="text-slate-300" strokeWidth="2" />
+        <rect x="21" y="17" width="22" height="6" rx="2" fill="currentColor" className="text-slate-200" />
+        <rect x="21" y="29" width="22" height="7" rx="2" stroke="currentColor" className="text-slate-300" strokeWidth="2" />
+        <rect x="21" y="42" width="22" height="6" rx="2" fill="currentColor" className="text-slate-200" />
+        {nulo ? (
+          <>
+            <circle cx="32" cy="32" r="17" fill="currentColor" className="text-red-100" opacity="0.8" />
+            <path d="M26 26L38 38M38 26L26 38" stroke="currentColor" className="text-red-500" strokeWidth="5" strokeLinecap="round" />
+          </>
+        ) : (
+          <path d="M25 32H39" stroke="currentColor" className="text-[var(--brand)]" strokeWidth="3" strokeLinecap="round" opacity="0.65" />
+        )}
+      </svg>
+    </span>
+  );
+}
+
 export default function EleicaoVotacaoPage() {
   const { slug } = useParams() as { slug: string };
   const router = useRouter();
@@ -220,16 +246,19 @@ export default function EleicaoVotacaoPage() {
               return (
                 <button
                   aria-pressed={selected}
-                  className={`focus-ring flex min-h-24 items-center justify-between gap-4 rounded-2xl border px-4 py-4 text-left transition ${
+                  className={`focus-ring flex min-h-28 items-center justify-between gap-4 rounded-2xl border px-4 py-4 text-left transition ${
                     selected ? "border-[var(--brand)] bg-[var(--brand-soft)] text-[var(--brand-strong)] shadow-sm" : "border-[var(--line)] bg-[var(--surface-muted)] hover:border-[var(--brand)]/50 hover:bg-white"
                   }`}
                   key={tipo}
                   onClick={() => selecionarAlternativa(tipo)}
                   type="button"
                 >
-                  <div>
-                    <div className="text-sm font-black text-[var(--foreground)]">{titulo}</div>
-                    <div className="mt-1 text-xs leading-5 text-[var(--muted)]">{descricao}</div>
+                  <div className="flex min-w-0 items-center gap-4">
+                    <AlternativaVotoIlustracao tipo={tipo} />
+                    <div className="min-w-0">
+                      <div className="text-sm font-black text-[var(--foreground)] sm:text-base">{titulo}</div>
+                      <div className="mt-1 text-xs leading-5 text-[var(--muted)]">{descricao}</div>
+                    </div>
                   </div>
                   <span className={`grid size-7 shrink-0 place-items-center rounded-full border text-xs font-black ${selected ? "border-[var(--brand)] bg-[var(--brand)] text-[var(--brand-contrast)]" : "border-[var(--line)] bg-white text-transparent"}`}>✓</span>
                 </button>
