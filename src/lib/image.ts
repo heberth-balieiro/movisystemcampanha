@@ -1,15 +1,19 @@
+import { resolverApiMediaUrl } from "@/services/api";
+
 export function imagemBase64(valor?: string | null, mime = "image/png") {
   if (!valor) return null;
 
-  if (valor.startsWith("data:image/"))
-    return valor;
+  const value = valor.trim();
+  if (!value) return null;
 
-  return `data:${mime};base64,${valor}`;
+  if (value.startsWith("data:image/")) return value;
+
+  if (/^https?:\/\//i.test(value)) return value;
+
+  if (value.startsWith("/api/")) return resolverApiMediaUrl(value);
+
+  return `data:${mime};base64,${value}`;
 }
 
-//uso da funcao
-
-// import { imagemBase64 } from "@/lib/image";
-
-// const logoSrc = imagemBase64(data.logo);
-// const bannerSrc = imagemBase64(data.banner);
+// Mantido o nome por compatibilidade com os componentes existentes.
+// A função agora aceita Base64 legado e também URLs de mídia da API.
