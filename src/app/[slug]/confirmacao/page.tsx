@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import {
+  consultarCanaisConfirmacao,
   getUserFriendlyConfirmationError,
   solicitarCodigoPorEmail,
   type CanalConfirmacao,
@@ -25,6 +26,7 @@ import {
 } from "@/services/eleicao/eleicao-session.service";
 
 type DadosEnvioCodigo = SolicitarCodigoContingenciaDados;
+type StatusEnvio = "PENDENTE" | "ENVIADO" | "FALHA";
 
 export default function EleicaoConfirmacaoPage() {
   const { slug } = useParams() as { slug: string };
@@ -35,6 +37,7 @@ export default function EleicaoConfirmacaoPage() {
   const [mensagemErro, setMensagemErro] = useState<string | null>(null);
   const [destino, setDestino] = useState("");
   const [canal, setCanal] = useState<CanalConfirmacao>("WHATSAPP");
+  const [statusEnvio, setStatusEnvio] = useState<StatusEnvio>("PENDENTE");
   const [emailDisponivel, setEmailDisponivel] = useState(false);
   const [emailDestino, setEmailDestino] = useState("");
   const [expiraSegundos, setExpiraSegundos] = useState(0);
@@ -80,10 +83,25 @@ export default function EleicaoConfirmacaoPage() {
     setEmailDestino(dados.email_destino || "");
     setExpiraSegundos(dados.expira_em_segundos || 0);
     setReenviarSegundos(dados.reenviar_em_segundos || 0);
+    setStatusEnvio("ENVIADO");
+  }
+
+  async function carregarCanaisAlternativos(tokenIdentificacao: string) {
+    try {
+      const response = await consultarCanaisConfirmacao(slug, tokenIdentificacao);
+      if (response.erro || !response.dados) return;
+      setEmailDisponivel(Boolean(response.dados.email_disponivel));
+      setEmailDestino(response.dados.email_destino || "");
+    } catch {
+      // A indisponibilidade da consulta de canais não deve substituir o erro principal.
+    }
   }
 
   async function solicitarCodigo(tokenIdentificacao: string) {
     setMensagemErro(null);
+    setCanal("WHATSAPP");
+    setStatusEnvio("PENDENTE");
+    setDestino("");
     setEnviando(true);
     try {
       const response = await solicitarCodigoConfirmacao(slug, tokenIdentificacao);
@@ -93,14 +111,22 @@ export default function EleicaoConfirmacaoPage() {
           router.replace(`/${slug}/login`);
           return;
         }
+        setStatusEnvio("FALHA");
+        setExpiraSegundos(0);
+        setReenviarSegundos(0);
         setMensagemErro(getUserFriendlyConfirmationError("WHATSAPP", response.mensagem));
+        await carregarCanaisAlternativos(tokenIdentificacao);
         return;
       }
       if (response.dados) {
         aplicarDadosEnvio(response.dados as DadosEnvioCodigo);
       }
     } catch {
+      setStatusEnvio("FALHA");
+      setExpiraSegundos(0);
+      setReenviarSegundos(0);
       setMensagemErro(getUserFriendlyConfirmationError("WHATSAPP"));
+      await carregarCanaisAlternativos(tokenIdentificacao);
     } finally {
       setEnviando(false);
     }
@@ -178,6 +204,9 @@ export default function EleicaoConfirmacaoPage() {
     }
 
     setMensagemErro(null);
+    setCanal("EMAIL");
+    setStatusEnvio("PENDENTE");
+    setDestino(emailDestino);
     setEnviando(true);
     try {
       const response = await solicitarCodigoPorEmail(slug, tokenIdentificacao);
@@ -187,6 +216,7 @@ export default function EleicaoConfirmacaoPage() {
           router.replace(`/${slug}/login`);
           return;
         }
+        setStatusEnvio("FALHA");
         setMensagemErro(getUserFriendlyConfirmationError("EMAIL", response.mensagem));
         return;
       }
@@ -194,6 +224,7 @@ export default function EleicaoConfirmacaoPage() {
       aplicarDadosEnvio(response.dados);
       setCodigo("");
     } catch {
+      setStatusEnvio("FALHA");
       setMensagemErro(getUserFriendlyConfirmationError("EMAIL"));
     } finally {
       setEnviando(false);
@@ -205,7 +236,9 @@ export default function EleicaoConfirmacaoPage() {
   }
 
   const usandoEmail = canal === "EMAIL";
-  const mostrarEmail = reenviouWhatsapp && emailDisponivel;
+  const envioFalhou = statusEnvio === "FALHA";
+  const envioPendente = statusEnvio === "PENDENTE";
+  const mostrarEmail = emailDisponivel && (envioFalhou || reenviouWhatsapp || usandoEmail);
   const mostrarContato = reenviouWhatsapp;
 
   return (
@@ -225,7 +258,11 @@ export default function EleicaoConfirmacaoPage() {
           </h1>
 
           <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[var(--muted)]">
-            Digite o código de 6 dígitos enviado ao seu {usandoEmail ? "e-mail cadastrado" : "WhatsApp"} para continuar.
+            {statusEnvio === "ENVIADO"
+              ? `Digite o código de 6 dígitos enviado ao seu ${usandoEmail ? "e-mail cadastrado" : "WhatsApp"} para continuar.`
+              : envioPendente
+                ? `Aguarde enquanto enviamos o código pelo ${usandoEmail ? "e-mail" : "WhatsApp"}.`
+                : "Escolha uma opção disponível para receber um novo código de confirmação."}
           </p>
         </section>
 
@@ -240,9 +277,17 @@ export default function EleicaoConfirmacaoPage() {
               </p>
               {nomeAssociado ? <p className="mt-1 font-extrabold text-[var(--foreground)]">Olá, {nomeAssociado}.</p> : null}
               <p className="mt-1">
-                Enviamos um código de confirmação para o {usandoEmail ? "e-mail" : "WhatsApp"} cadastrado.
+                {statusEnvio === "ENVIADO"
+                  ? `Enviamos um código de confirmação para o ${usandoEmail ? "e-mail" : "WhatsApp"} cadastrado.`
+                  : envioPendente
+                    ? `Estamos tentando enviar seu código pelo ${usandoEmail ? "e-mail" : "WhatsApp"}.`
+                    : usandoEmail
+                      ? "Não foi possível concluir o envio por e-mail. Tente novamente em alguns instantes."
+                      : emailDisponivel
+                        ? "Não foi possível concluir o envio pelo WhatsApp. Você pode tentar novamente ou receber o código por e-mail."
+                        : "Não foi possível concluir o envio pelo WhatsApp. Tente novamente."}
               </p>
-              {destino ? <p className="mt-1 font-mono font-bold text-[var(--foreground)]">{destino}</p> : null}
+              {destino && statusEnvio === "ENVIADO" ? <p className="mt-1 font-mono font-bold text-[var(--foreground)]">{destino}</p> : null}
             </div>
           </div>
 
@@ -279,8 +324,10 @@ export default function EleicaoConfirmacaoPage() {
           <div className="mt-3 text-center text-sm font-medium text-[var(--muted)]">
             {expiraSegundos > 0 ? (
               <span>Código válido por <strong className="text-[var(--foreground)]">{formatarTempo(expiraSegundos)}</strong></span>
-            ) : (
+            ) : statusEnvio === "ENVIADO" ? (
               <span>Código expirado. Solicite um novo código.</span>
+            ) : (
+              <span>Nenhum código ativo no momento.</span>
             )}
           </div>
 
@@ -317,7 +364,9 @@ export default function EleicaoConfirmacaoPage() {
             {mostrarEmail ? (
               <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] p-4 text-center">
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-[var(--brand)]">Receber por e-mail</p>
-                <p className="mt-2 text-sm font-semibold text-[var(--foreground)]">Ainda não recebeu pelo WhatsApp?</p>
+                <p className="mt-2 text-sm font-semibold text-[var(--foreground)]">
+                  {envioFalhou && !usandoEmail ? "O WhatsApp não está disponível no momento?" : "Ainda não recebeu pelo WhatsApp?"}
+                </p>
                 {emailDestino ? (
                   <p className="mt-1 text-xs text-[var(--muted)]">
                     Podemos enviar um novo código para <span className="font-mono font-bold text-[var(--foreground)]">{emailDestino}</span>.
