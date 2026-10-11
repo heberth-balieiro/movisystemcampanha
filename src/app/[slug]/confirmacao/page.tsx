@@ -52,6 +52,8 @@ export default function EleicaoConfirmacaoPage() {
   const [destino, setDestino] = useState("");
   const [canal, setCanal] = useState<CanalConfirmacao | null>(null);
   const [statusEnvio, setStatusEnvio] = useState<StatusEnvio>("AGUARDANDO_ESCOLHA");
+  const [whatsappDisponivel, setWhatsappDisponivel] = useState(true);
+  const [whatsappDestino, setWhatsappDestino] = useState("");
   const [emailDisponivel, setEmailDisponivel] = useState(false);
   const [emailDestino, setEmailDestino] = useState("");
   const [expiraSegundos, setExpiraSegundos] = useState(0);
@@ -82,14 +84,20 @@ export default function EleicaoConfirmacaoPage() {
             router.replace(`/${slug}/login`);
             return;
           }
+          setWhatsappDisponivel(true);
+          setWhatsappDestino("");
           setEmailDisponivel(false);
           setEmailDestino("");
         } else if (response.dados) {
+          setWhatsappDisponivel(response.dados.whatsapp_disponivel !== false);
+          setWhatsappDestino(response.dados.whatsapp_destino || "");
           setEmailDisponivel(Boolean(response.dados.email_disponivel));
           setEmailDestino(response.dados.email_destino || "");
         }
       } catch {
         if (ativo) {
+          setWhatsappDisponivel(true);
+          setWhatsappDestino("");
           setEmailDisponivel(false);
           setEmailDestino("");
         }
@@ -116,6 +124,7 @@ export default function EleicaoConfirmacaoPage() {
   function aplicarDadosEnvio(dados: DadosEnvioCodigo, canalEnviado: CanalConfirmacao) {
     setDestino(dados.destino || "");
     setCanal(canalEnviado);
+    if (canalEnviado === "WHATSAPP" && dados.destino) setWhatsappDestino(dados.destino);
     setEmailDisponivel(Boolean(dados.email_disponivel ?? emailDisponivel));
     setEmailDestino(dados.email_destino || emailDestino);
     setExpiraSegundos(dados.expira_em_segundos || 0);
@@ -305,10 +314,10 @@ export default function EleicaoConfirmacaoPage() {
           </div>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <button type="button" onClick={() => void onEnviarWhatsapp()} disabled={!podeSolicitar} className="rounded-2xl border border-[var(--line)] bg-white p-4 text-left shadow-sm transition hover:border-[var(--brand)]/40 hover:bg-[var(--brand-soft)] disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="button" onClick={() => void onEnviarWhatsapp()} disabled={!whatsappDisponivel || !podeSolicitar} className="rounded-2xl border border-[var(--line)] bg-white p-4 text-left shadow-sm transition hover:border-[var(--brand)]/40 hover:bg-[var(--brand-soft)] disabled:cursor-not-allowed disabled:opacity-50">
               <span className="flex items-center gap-3">
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--brand-soft)] text-[var(--brand)]"><Icon name="whatsapp" /></span>
-                <span><strong className="block text-sm text-[var(--foreground)]">Receber por WhatsApp</strong><span className="mt-1 block text-xs leading-5 text-[var(--muted)]">Enviar para o WhatsApp cadastrado.</span></span>
+                <span><strong className="block text-sm text-[var(--foreground)]">Receber por WhatsApp</strong><span className="mt-1 block text-xs leading-5 text-[var(--muted)]">{whatsappDisponivel ? (whatsappDestino || "Enviar para o WhatsApp cadastrado.") : "WhatsApp indisponível para este eleitor."}</span></span>
               </span>
             </button>
 
