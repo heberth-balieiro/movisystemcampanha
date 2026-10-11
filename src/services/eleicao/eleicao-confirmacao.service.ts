@@ -17,6 +17,13 @@ export type SolicitarCodigoContingenciaDados = {
 export type SolicitarCodigoContingenciaResponse =
   ApiResponse<SolicitarCodigoContingenciaDados | null>;
 
+export type CanaisConfirmacaoDados = {
+  email_disponivel: boolean;
+  email_destino: string | null;
+};
+
+export type CanaisConfirmacaoResponse = ApiResponse<CanaisConfirmacaoDados | null>;
+
 const MENSAGENS_FUNCIONAIS_SEGURAS = [
   "código expirado",
   "codigo expirado",
@@ -90,6 +97,35 @@ export function getUserFriendlyConfirmationError(
   }
 
   return "Não foi possível enviar o código pelo WhatsApp. Tente novamente ou utilize outro canal disponível.";
+}
+
+export async function consultarCanaisConfirmacao(
+  slug: string,
+  tokenIdentificacao: string,
+): Promise<CanaisConfirmacaoResponse> {
+  const slugSeguro = encodeURIComponent(slug);
+
+  try {
+    return await apiFetch(
+      `/api/v1/public/eleicao/${slugSeguro}/confirmacao/canais`,
+      {
+        method: "GET",
+        token: tokenIdentificacao,
+        cache: "no-store",
+        redirectOnUnauthorized: false,
+      },
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      return {
+        erro: true,
+        mensagem: error.message,
+        dados: null,
+      };
+    }
+
+    throw error;
+  }
 }
 
 export async function solicitarCodigoPorEmail(
